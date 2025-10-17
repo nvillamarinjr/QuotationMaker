@@ -1,0 +1,34 @@
+﻿<nav class="navbar navbar-expand navbar-light navbar-bg">
+    <a class="sidebar-toggle js-sidebar-toggle">
+        <i class="hamburger align-self-center"></i>
+    </a>
+
+    <div class="navbar-collapse collapse">
+        <div class="justify-content-start">
+            <div class="ms-auto datetime" id="datetime"></div>
+        </div>
+    </div>
+</nav>
+
+<script>
+    function updateDateTime() {
+        const now = new Date();
+
+        const options = {
+            weekday: 'short',
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        };
+
+        const formatted = now.toLocaleDateString('en-US', options);
+        document.getElementById('datetime').textContent = formatted;
+    }
+
+    // Update every second
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+</script>

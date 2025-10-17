@@ -1,0 +1,235 @@
+﻿@{ 
+    Layout = null;
+}
+
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="~/Content/img/edtech.png" />
+    <link href="~/Content/sweetalert/sweetalert2.min.css" rel="stylesheet" />
+    <link href="~/Content/toastr.min.css" rel="stylesheet" />
+    <link href="~/Content/css/app.css" rel="stylesheet" />
+</head>
+
+<body>
+    <style>
+        body {
+            background-image: url('../../Content/img/abstract-blue-geometric-shapes-background.jpg');
+            /*background-image: url('../../Content/img/network-4561515_1280.jpg');*/
+            /*background-image: url('../../Content/img/loginbg.gif');*/
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-attachment: fixed;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .card {
+            background: rgba(0, 0, 0, 0.16);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(10px);
+            /* border: 1px solid rgba(255, 255, 255, 0.3);*/
+            border-radius: 15px;
+        }
+
+        /* From Uiverse.io by adamgiebl */
+        .cssbuttons-io-button {
+            background: #6465d2;
+            color: white;
+            font-family: inherit;
+            padding: 0.35em;
+            padding-left: 1.2em;
+            font-size: 17px;
+            font-weight: 500;
+            border-radius: 0.9em;
+            border: none;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            box-shadow: inset 0 0 1.6em -0.6em #3e1679;
+            overflow: hidden;
+            position: relative;
+            height: 2.8em;
+            padding-right: 3.3em;
+            cursor: pointer;
+        }
+
+            .cssbuttons-io-button .icon {
+                background: white;
+                margin-left: 1em;
+                position: absolute;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 2.2em;
+                width: 2.2em;
+                border-radius: 0.7em;
+                box-shadow: 0.1em 0.1em 0.6em 0.2em #6663d8;
+                right: 0.3em;
+                transition: all 0.3s;
+            }
+
+            .cssbuttons-io-button:hover .icon {
+                width: calc(100% - 0.6em);
+            }
+
+            .cssbuttons-io-button .icon svg {
+                width: 1.1em;
+                transition: transform 0.3s;
+                color: #7b52b9;
+            }
+
+            .cssbuttons-io-button:hover .icon svg {
+                transform: translateX(0.1em);
+            }
+
+            .cssbuttons-io-button:active .icon {
+                transform: scale(0.95);
+            }
+
+        .form-control {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+        }
+
+        .form-check-input:checked {
+            background-color: #675fdb !important;
+            border-color: #6464d1 !important;
+        }
+    </style>
+
+    <main class="d-flex w-100">
+        <div id="loginbg" class="container d-flex flex-column">
+            <div class="row vh-100">
+                <div class="col-sm-10 col-md-8 col-lg-6 col-xl-5 mx-auto d-table h-100">
+                    <div class="d-table-cell align-middle">
+
+                        <div class="text-center mt-4 mb-0">
+                            <img src="~/Content/img/Quotation_Maker.png" alt="Logo" style="width:450px; height:90px; margin-bottom:15px;" />
+                        </div>
+
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="m-sm-3">
+                                    <form>
+                                        <div class="mb-2">
+                                            @*<label class="form-label text-dark" style="font-size: 18px;">Username</label>*@
+                                            <input class="form-control form-control-lg p-2" type="email" name="email" id="username" placeholder="Enter your username">
+                                        </div>
+                                        <div class="mb-3">
+                                            @*<label class="form-label text-dark" style="font-size: 18px;">Password</label>*@
+                                            <input class="form-control form-control-lg p-2" type="password" name="password" id="password" placeholder="Enter your password">
+                                        </div>
+                                        <div>
+                                            <div class="form-check align-items-center">
+                                                <input id="customControlInline" style="cursor:pointer" type="checkbox" class="form-check-input" value="remember-me" name="remember-me">
+                                                <label class="form-check-label text-small text-dark" for="customControlInline">Show Password</label>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-center mt-3">
+                                            <button class="cssbuttons-io-button" onclick="login()">
+                                                Login
+                                                <div class="icon">
+                                                    <svg height="24"
+                                                         width="24"
+                                                         viewBox="0 0 24 24"
+                                                         xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M0 0h24v24H0z" fill="none"></path>
+                                                        <path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"
+                                                              fill="#6663d8"></path>
+                                                    </svg>
+                                                </div>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="~/Scripts/jquery-3.4.1.js"></script>
+    <script src="~/Scripts/jquery-3.4.1.min.js"></script>
+    <script src="~/Content/sweetalert/sweetalert2.all.min.js"></script>
+    <script src="~/Scripts/toastr.min.js"></script>
+    <script src="~/Content/js/app.js"></script>
+    <script>
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 1000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": false,
+            "positionClass": "toast-bottom-right", // try toast-bottom-right, toast-top-center, etc.
+            "preventDuplicates": true,
+            "onclick": null,
+            "timeOut": 0,
+            "extendedTimeOut": 0
+            /*            "timeOut": "3000", // duration the toast stays*/
+        };
+
+        function login() {
+            var username = document.getElementById('username').value;
+            var password = document.getElementById('password').value;
+
+            if (!username || !password) {
+                toastr.warning("Please enter both Username and Password", "Warning");
+                return; // stop further execution
+            }
+
+            fetch('/Login/UserLogin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: username, password: password })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        localStorage.setItem("isLoggedIn", "true");
+                   
+                            Toast.fire({
+                                icon: "success",
+                                title: "Signed in successfully"
+                            }).then(() => {
+                                // Redirect after the toast closes
+                                setTimeout(() => {
+                                    window.location.href = "/Home/Dashboard";
+                                }, 1000); // small delay for smooth transition
+                            });
+                                                  
+                    } else {
+                        toastr.error(data.error, "Error");
+                    }
+                })
+                .catch(error => {
+                    alert('Error: ' + error);
+                });
+        }
+
+        if (!localStorage.getItem("isLoggedIn")) {
+            window.history.pushState(null, "", window.location.href);
+            window.onpopstate = function () {
+                window.history.pushState(null, "", window.location.href);
+            };
+        }
+    </script>
+</body>
+</html>
+

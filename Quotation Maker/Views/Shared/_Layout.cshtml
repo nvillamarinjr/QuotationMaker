@@ -1,0 +1,171 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <link href="~/Content/css/select2.min.css" rel="stylesheet" />
+    <link href="~/Content/src/select2-bootstrap4.min.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/datatables/datatables.min.css" rel="stylesheet" />
+    <link href="~/Content/css/app.css" rel="stylesheet" />
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <style>
+        html, body {
+            margin: 0 !important;
+            padding: 0 !important;
+            height: 100%;
+        }
+
+        body {
+           
+            display: flex;
+            align-items: stretch; /* Ensures both columns stretch equally */
+/*            overflow: hidden !important;*/
+            font-family: 'Nunito', sans-serif;
+        }
+
+        #sidebar {
+            overflow: hidden !important;
+            min-height: 100vh !important; /* At least full viewport */
+            height: 100%; /* But can stretch to match content */
+            background: #233045; /* Your sidebar color */
+            flex: 0 0 220px; /* Fixed width, no shrink */
+            position: relative; /* Not fixed! */
+        }
+
+        .main-content-wrapper {
+            display: flex;
+            flex-direction: column;
+            flex: 1 1 auto;
+            min-height: 100vh;
+            width: 0;
+            overflow-y: auto !important; /* only content scrolls */
+        }
+
+        .navbar {
+            width: 100%;
+            z-index: 1030;
+            position: fixed;
+        }
+
+        .main {
+            flex: 1 1 auto;
+            padding: 24px;
+            background: #f8f9fa;
+        }
+
+        a:hover {
+            text-decoration: none;
+        }
+
+        .simplebar-wrapper {
+            height: inherit !important;
+            max-height: inherit !important;
+            max-width: inherit !important;
+            overflow: hidden !important;
+            width: inherit !important;
+            background-color: #6465d2 !important;
+        }
+
+        .sidebar-link, a.sidebar-link {
+            background: #6465d2 !important;
+        }
+
+        .p-0 {
+            padding: 0 !important;
+            color: white !important;
+        }
+    </style>
+</head>
+<body>
+    <nav id="sidebar" class="sidebar js-sidebar">
+        <div class="sidebar-content js-simplebar" data-simplebar="init">
+            <!-- Sidebar content as before -->
+            <div class="simplebar-wrapper" style="margin: 0px;">
+                <div class="simplebar-height-auto-observer-wrapper"><div class="simplebar-height-auto-observer"></div></div>
+                <div class="simplebar-mask">
+                    <div class="simplebar-offset" style="right: 0px; bottom: 0px;">
+                        <div class="simplebar-content-wrapper" tabindex="0" role="region" aria-label="scrollable content" style="height: 100%; overflow: hidden scroll;">
+                            <div class="simplebar-content" style="padding: 0px;">
+                                <a class="sidebar-brand d-block text-center" href="#">
+                                    <h4 class="align-middle text-light">Quotation Maker</h4>
+                                </a>
+                                <ul class="sidebar-nav">
+                                    <li class="sidebar-item">
+                                        <a class="sidebar-link d-flex align-items-center" href="#">
+                                            <i class="fa fa-list"></i>
+                                            <span class="align-middle ms-2 p-0">Generate Quotation</span>
+                                        </a>
+                                    </li>
+                                    <li class="sidebar-item">
+                                        <a class="sidebar-link d-flex align-items-center" href="#">
+                                            <i class="fa fa-user-circle"></i>
+                                            <span class="align-middle ms-2 p-0">Admin Settings</span>
+                                        </a>
+                                    </li>
+                                    <li class="sidebar-item">
+                                        <a class="sidebar-link d-flex align-items-center" href="#">
+                                            <i class="fa fa-sign-out"></i>
+                                            <span class="align-middle ms-2 p-0" onclick="logout()">Sign-out</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="simplebar-placeholder" style="width: auto; height: 957px;"></div>
+            </div>
+            <div class="simplebar-track simplebar-horizontal" style="visibility: hidden;">
+                <div class="simplebar-scrollbar" style="width: 0px; display: none;"></div>
+            </div>
+            <div class="simplebar-track simplebar-vertical" style="visibility: visible;">
+                <div class="simplebar-scrollbar" style="height: 493px; transform: translate3d(0px, 0px, 0px); display: block;"></div>
+            </div>
+        </div>
+    </nav>
+    <div class="main-content-wrapper">
+        <nav class="navbar navbar-expand navbar-light navbar-bg">
+            <a class="sidebar-toggle js-sidebar-toggle">
+                <i class="hamburger align-self-center"></i>
+            </a>
+            <div class="navbar-collapse collapse">
+                <div class="justify-content-start">
+                    <div class="ms-auto datetime" id="datetime"></div>
+                </div>
+            </div>
+        </nav>
+
+        @RenderBody()
+
+    </div>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+    <script src="~/Content/js/app.js"></script>
+    <script src="~/Scripts/select2.min.js"></script>
+    <script src="~/Scripts/quotation/SignOut.js"></script>
+    <script src="~/Content/datatables/datatables.min.js"></script>
+    <script>
+        function updateDateTime() {
+            const now = new Date();
+            const options = {
+                weekday: 'short',
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            const formatted = now.toLocaleDateString('en-US', options);
+            document.getElementById('datetime').textContent = formatted;
+        }
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+    </script>
+</body>
+</html>
