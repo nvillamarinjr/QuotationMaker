@@ -4,19 +4,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QM | Dashboard</title>
     <link rel="icon" type="image/png" href="~/Content/img/edtech.png" />
+    <link href="~/Content/iziToast-master/dist/css/iziToast.min.css" rel="stylesheet" />
     <link href="~/Content/css/select2.min.css" rel="stylesheet" />
     <link href="~/Content/src/select2-bootstrap4.min.css" rel="stylesheet" />
-    <link href="~/Content/iziToast-master/dist/css/iziToast.min.css" rel="stylesheet" />
     <link href="~/Content/datatables/datatables.min.css" rel="stylesheet" />
 </head>
 
 <body>
     <style>
-        /*        #studentTable, #laborTable td,
-                #studentTable, #laborTable th {
-                    text-align: center;
-                }
-        */
+
+        /* ✅ Make select2 container behave like a Bootstrap input */
+        .select2-container--default .select2-selection--single {
+            height: calc(2.25rem + 2px);
+            border: 1px solid #ced4da;
+            border-radius: 0.375rem;
+            display: flex;
+            align-items: center;
+        }
+
+            /* ✅ Truncate selected text based on container width */
+            .select2-container--default .select2-selection--single .select2-selection__rendered {
+                display: block;
+                width: 100%;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                padding-right: 1.5rem; /* space for the dropdown arrow */
+            }
+
+        .dataTables_empty {
+            text-align: center !important;
+        }
 
         /*.input-group-text {
                     min-width: 140px;*/ /* makes all labels same width */
@@ -34,6 +52,15 @@
             text-overflow: ellipsis !important;
             white-space: nowrap !important;
         }
+
+        .modal-body {
+            position: relative;
+            -ms-flex: 1 1 auto;
+            flex: 1 1 auto;
+            padding: 17% !important;
+            padding-top: 5% !important;
+            padding-bottom: 5% !important;
+        }
     </style>
 
     <div class="container-fluid mt-6">
@@ -47,16 +74,9 @@
                         <!-- Left Column -->
                         <div class="col-md-5">
                             <div class="mb-3 row">
-                                <label class="col-sm-4 col-form-label">JR Number:</label>
-                                <div class="col-sm-8">
-                                    <input type="text" class="form-control" placeholder="Enter JR Number">
-                                </div>
-                            </div>
-
-                            <div class="mb-3 row">
                                 <label class="col-sm-4 col-form-label">Quotation #:</label>
                                 <div class="col-sm-8">
-                                    <input type="text" class="form-control" placeholder="Enter Quotation #">
+                                    <input type="text" class="form-control" id="quotationnum" placeholder="Enter Quotation #" readonly>
                                 </div>
                             </div>
 
@@ -68,19 +88,32 @@
                             </div>
 
                             <div class="mb-3 row">
-                                <label class="col-sm-4 col-form-label">Validity (6 Months):</label>
+                                <label class="col-sm-4 col-form-label">Change Validity:</label>
                                 <div class="col-sm-8">
-                                    <input type="text" class="form-control" id="validity" readonly>
+                                    <select id="changevalidity" class="form-select">
+                                        <option value="">Select validity...</option>
+                                        <option value="3">3 Months</option>
+                                        <option value="6">6 Months</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row">
+                                <label class="col-sm-4 col-form-label">Validity:</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="validity" placeholder="N/A" readonly>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Right Column -->
+                    <div class="row justify-content-center mt-4">
+                        <!-- Left Column -->
                         <div class="col-md-5">
                             <div class="mb-3 row">
-                                <label class="col-sm-4 col-form-label">Subject:</label>
+                                <label class="col-sm-4 col-form-label">JR/Reference #:</label>
                                 <div class="col-sm-8">
-                                    <input type="text" class="form-control" placeholder="Add a subject">
+                                    <input type="text" class="form-control" placeholder="Enter JR Number">
                                 </div>
                             </div>
 
@@ -93,11 +126,165 @@
                             </div>
 
                             <div class="mb-3 row">
-                                <label class="col-sm-4 col-form-label">Total Amount:</label>
+                                <label class="col-sm-4 col-form-label">Department:</label>
                                 <div class="col-sm-8">
-                                    <input type="text" class="form-control" placeholder="N/A" disabled>
+                                    <input type="text" id="department" class="form-control" placeholder="N/A" readonly>
                                 </div>
                             </div>
+
+                            <div class="mb-3 row">
+                                <label class="col-sm-4 col-form-label">Local No:</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="localnum" placeholder="N/A" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column -->
+                        <div class="col-md-5">
+                            <div class="mb-3 row">
+                                <label class="col-sm-4 col-form-label">Quotation to:</label>
+                                <div class="col-sm-8">
+                                    <textarea class="form-control" id="quotationTo" rows="2" placeholder="..."></textarea>
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row">
+                                <label class="col-sm-4 col-form-label">Attention:</label>
+                                <div class="col-sm-8">
+                                    <input type="text" id="attention" class="form-control" placeholder="N/A">
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row">
+                                <label class="col-sm-4 col-form-label">Thru:</label>
+                                <div class="col-sm-8">
+                                    <input type="text" id="thru" class="form-control" placeholder="N/A">
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row">
+                                <label class="col-sm-4 col-form-label">Subject:</label>
+                                <div class="col-sm-8">
+                                    <textarea class="form-control" id="subject" rows="1" placeholder="Enter a subject..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--<div class="container-fluid mt-0">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title mb-0 text-dark" style="font-weight: bold; font-size:20px;">Quotation Details</h2>
+                    </div>
+                    <div class="row justify-content-center mt-4">-->
+    <!-- Left Column -->
+    <!--<div class="col-md-5">
+        <div class="mb-3 row">
+            <label class="col-sm-4 col-form-label">JR/Reference #:</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" placeholder="Enter JR Number">
+            </div>
+        </div>
+
+        <div class="mb-3 row">
+            <label class="col-sm-4 col-form-label">Requestor:</label>
+            <div class="col-sm-8">
+                <select id="requestor" class="form-select">
+                </select>
+            </div>
+        </div>
+
+        <div class="mb-3 row">
+            <label class="col-sm-4 col-form-label">Department:</label>
+            <div class="col-sm-8">
+                <input type="text" id="department" class="form-control" placeholder="N/A" readonly>
+            </div>
+        </div>
+
+        <div class="mb-3 row">
+            <label class="col-sm-4 col-form-label">Local No:</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="localnum" placeholder="N/A" readonly>
+            </div>
+        </div>
+    </div>-->
+    <!-- Right Column -->
+    <!--<div class="col-md-5">
+                            <div class="mb-3 row">
+                                <label class="col-sm-4 col-form-label">Quotation to:</label>
+                                <div class="col-sm-8">
+                                    <input type="text" id="quotationTo" class="form-control" placeholder="N/A">
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row">
+                                <label class="col-sm-4 col-form-label">Attention:</label>
+                                <div class="col-sm-8">
+                                    <input type="text" id="attention" class="form-control" placeholder="N/A">
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row">
+                                <label class="col-sm-4 col-form-label">Thru:</label>
+                                <div class="col-sm-8">
+                                    <input type="text" id="thru" class="form-control" placeholder="N/A">
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row">
+                                <label class="col-sm-4 col-form-label">Subject:</label>
+                                <div class="col-sm-8">
+                                    <textarea class="form-control" id="subject" rows="1" placeholder="Enter a subject..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>-->
+    <div class="container-fluid mt-0">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title mb-0 text-dark" style="font-weight: bold; font-size:20px;">List of Items</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-end">
+                            <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#itemModal">
+                                <i class="fa fa-plus"></i>
+                                Add Item
+                            </button>
+                        </div>
+
+                        <table id="itemTable" class="table table-bordered table-striped">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Item Description</th>
+                                    <th>Qty</th>
+                                    <th>Unit</th>
+                                    <th>Rate</th>
+                                    <th>Amount</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+
+                        <div class="input-group justify-content-end mb-2">
+                            <span class="input-group-text" id="inputGroup-sizing-default">Sub Total:</span>
+                            <input type="text" class="form-control" id="totalitemsamount" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" placeholder="N/A" readonly>
                         </div>
                     </div>
                 </div>
@@ -128,50 +315,69 @@
                                     <th>Working Day</th>
                                     <th>Rate</th>
                                     <th>Amount</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                             </tbody>
                         </table>
+
+                        <div class="input-group justify-content-end mb-2">
+                            <span class="input-group-text" id="inputGroup-sizing-default">Sub Total:</span>
+                            <input type="text" class="form-control" id="totallaboramount" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" placeholder="N/A" readonly>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
 
     <div class="container-fluid mt-0">
         <div class="row">
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                        <h2 class="card-title mb-0 text-dark" style="font-weight: bold; font-size:20px;">Generate Quotation</h2>
+                        <h2 class="card-title mb-0 text-dark" style="font-weight: bold; font-size:20px;">Total Amounts</h2>
                     </div>
                     <div class="card-body">
-                        <div class="text-end">
-                            <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                <i class="fa fa-plus"></i>
-                                Add Item
-                            </button>
 
-                            <button type="button" class="btn btn-success">
-                                <i class="fa fa-check"></i>
-                                Generate Quotation
-                            </button>
+                        <div class="row justify-content-center mt-4">
+                            <!-- Left Column -->
+                            <div class="col-md-5">
+                                <div class="mb-2 row">
+                                    <label class="col-sm-4 col-form-label">Materials Sub Total:</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" id="materialtotal" class="form-control" placeholder="N/A" readonly>
+                                    </div>
+                                </div>
+
+                                <div class="mb-2 row">
+                                    <label class="col-sm-4 col-form-label">Labor Sub Total:</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" id="labortotal" class="form-control" placeholder="N/A" readonly>
+                                    </div>
+                                </div>
+
+                                <div class="mb-2 row">
+                                    <label class="col-sm-4 col-form-label">Vat:</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" id="vat" class="form-control" placeholder="N/A" readonly>
+                                    </div>
+                                </div>
+
+                                <div class="mb-2 row">
+                                    <label class="col-sm-4 col-form-label">Total:</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" id="totalamounts" class="form-control" placeholder="N/A" readonly>
+                                    </div>
+                                </div>
+                                <div class="mb-2 row">
+                                    <label class="col-sm-4 col-form-label">Total in words:</label>
+                                    <label class="ml-1" id="inWords" style="display:block;margin-top:10px;font-weight:bold;color:red;"></label>
+                                </div>
+                            </div>
                         </div>
-
-                        <table id="studentTable" class="table table-bordered table-striped">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Item</th>
-                                    <th>Qty</th>
-                                    <th>Unit</th>
-                                    <th>Rate</th>
-                                    <th>Amount</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
                     </div>
                 </div>
             </div>
@@ -180,8 +386,18 @@
 
 
 
+
+    <div class="text-center mt-0 mb-4">
+        <button type="button" id="generateQuotation" class="btn btn-success">
+            <i class="fa fa-check"></i>
+            Generate Quotation
+        </button>
+    </div>
+
+
+
     <!-- MODAL -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="itemModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -202,7 +418,17 @@
                                 <option value="">Select a unit...</option>
                                 <option value="pcs">pcs</option>
                                 <option value="meters">meters</option>
+                                <option value="pack">pack</option>
+                                <option value="pack">box</option>
+                                <option value="pack">set</option>
+                                <option value="pack">roll</option>
+                                <option value="pack">core</option>
                             </select>
+                        </div>
+
+                        <div class="input-group mb-2">
+                            <span class="input-group-text" id="inputGroup-sizing-default">Quantity:</span>
+                            <input type="number" class="form-control" id="quantity" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" value="1" min="1" disabled>
                         </div>
 
                         <div class="input-group mb-2">
@@ -210,15 +436,19 @@
                             <input type="text" class="form-control" id="rate" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" placeholder="N/A" readonly>
                         </div>
 
+                        <div class="input-group mb-2">
+                            <span class="input-group-text" id="inputGroup-sizing-default">Total Amount:</span>
+                            <input type="text" class="form-control" id="totalamount" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" placeholder="N/A" readonly>
+                        </div>
+
                         @*<div class="input-group mb-3">
                                 <span class="input-group-text" id="inputGroup-sizing-default">Amount:</span>
                                 <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" placeholder="N/A">
-                            </div>*@
-
+                         </div>*@
                     </form>
                 </div>
                 <div class="modal-footer d-flex justify-content-center">
-                    <button type="button" class="btn btn-success">Add</button>
+                    <button type="button" id="addItemModal" class="btn btn-success">Add</button>
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -242,23 +472,32 @@
 
                         <div class="input-group mb-2">
                             <span class="input-group-text" id="inputGroup-sizing-default">Working Day:</span>
-                            <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" value="Lot" readonly>
+                            <input type="text" class="form-control" id="work" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" value="lot" placeholder="Enter data...">
+                        </div>
+
+                        <div class="input-group mb-2">
+                            <span class="input-group-text" id="inputGroup-sizing-default">Count:</span>
+                            <input type="number" class="form-control" id="count" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" value="1" min="1" disabled>
                         </div>
 
                         <div class="input-group mb-2">
                             <span class="input-group-text" id="inputGroup-sizing-default">Rate:</span>
-                            <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" placeholder="N/A">
+                            <input type="text" class="form-control" id="laborrate" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" placeholder="N/A" readonly>
+                        </div>
+
+                        <div class="input-group mb-2">
+                            <span class="input-group-text" id="inputGroup-sizing-default">Total Amount:</span>
+                            <input type="text" class="form-control" id="totallabor" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" placeholder="N/A" readonly>
                         </div>
 
                         @*<div class="input-group mb-3">
                                 <span class="input-group-text" id="inputGroup-sizing-default">Amount:</span>
                                 <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" placeholder="N/A">
-                            </div>*@
-
+                          </div>*@
                     </form>
                 </div>
                 <div class="modal-footer d-flex justify-content-center">
-                    <button type="button" class="btn btn-success">Add</button>
+                    <button type="button" class="btn btn-success" id="addLaborModal">Add</button>
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -270,5 +509,6 @@
 <script src="~/Scripts/jquery-3.4.1.min.js"></script>
 <script src="~/Scripts/select2.min.js"></script>
 <script src="~/Content/iziToast-master/dist/js/iziToast.min.js"></script>
+<script src="~/Scripts/quotation/SignOut.js"></script>
 <script src="~/Content/datatables/datatables.min.js"></script>
 <script src="~/Scripts/quotation/Dashboard.js"></script>

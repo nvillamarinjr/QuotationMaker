@@ -40,5 +40,19 @@ namespace Quotation_Maker.Controllers
                 return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
             }
         }
+
+        [HttpGet]
+        public JsonResult GetLabor()
+        {
+            try
+            {
+                var labors = _dal.GetAllLabor();
+                return Json(labors, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
     }
 }

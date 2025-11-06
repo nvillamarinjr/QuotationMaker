@@ -7,6 +7,8 @@
 
     <link href="~/Content/css/select2.min.css" rel="stylesheet" />
     <link href="~/Content/src/select2-bootstrap4.min.css" rel="stylesheet" />
+    <link href="~/Content/iziToast-master/dist/css/iziToast.css" rel="stylesheet" />
+    <link href="~/Content/iziToast-master/dist/css/iziToast.min.css" rel="stylesheet" />
     <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
     <link href="~/Content/datatables/datatables.min.css" rel="stylesheet" />
     <link href="~/Content/css/app.css" rel="stylesheet" />
@@ -20,10 +22,8 @@
         }
 
         body {
-           
             display: flex;
-            align-items: stretch; /* Ensures both columns stretch equally */
-/*            overflow: hidden !important;*/
+            align-items: stretch; 
             font-family: 'Nunito', sans-serif;
         }
 
@@ -83,7 +83,6 @@
 <body>
     <nav id="sidebar" class="sidebar js-sidebar">
         <div class="sidebar-content js-simplebar" data-simplebar="init">
-            <!-- Sidebar content as before -->
             <div class="simplebar-wrapper" style="margin: 0px;">
                 <div class="simplebar-height-auto-observer-wrapper"><div class="simplebar-height-auto-observer"></div></div>
                 <div class="simplebar-mask">
@@ -147,6 +146,8 @@
     @RenderSection("scripts", required: false)
     <script src="~/Content/js/app.js"></script>
     <script src="~/Scripts/select2.min.js"></script>
+    <script src="~/Content/iziToast-master/dist/js/iziToast.js"></script>
+    <script src="~/Content/iziToast-master/dist/js/iziToast.min.js"></script>
     <script src="~/Scripts/quotation/SignOut.js"></script>
     <script src="~/Content/datatables/datatables.min.js"></script>
     <script>
