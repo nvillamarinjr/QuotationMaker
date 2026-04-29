@@ -37,6 +37,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -48,6 +49,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.9.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
+      <HintPath>..\packages\BouncyCastle.1.8.9\lib\BouncyCastle.Crypto.dll</HintPath>
+    </Reference>
+    <Reference Include="BouncyCastle.Cryptography, Version=2.0.0.0, Culture=neutral, PublicKeyToken=072edcf4a5328938, processorArchitecture=MSIL">
+      <HintPath>..\packages\BouncyCastle.Cryptography.2.4.0\lib\net461\BouncyCastle.Cryptography.dll</HintPath>
+    </Reference>
+    <Reference Include="itextsharp, Version=5.5.13.3, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <HintPath>..\packages\iTextSharp.5.5.13.3\lib\itextsharp.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.AspNetCore.Authorization, Version=3.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNetCore.Authorization.3.1.0\lib\netstandard2.0\Microsoft.AspNetCore.Authorization.dll</HintPath>
     </Reference>
@@ -84,6 +94,30 @@
     </Reference>
     <Reference Include="Microsoft.JSInterop, Version=3.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.JSInterop.3.1.0\lib\netstandard2.0\Microsoft.JSInterop.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.Common, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ReportingServices.ReportViewerControl.WebForms.150.1652.0\lib\net40\Microsoft.ReportViewer.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.DataVisualization, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ReportingServices.ReportViewerControl.WebForms.150.1652.0\lib\net40\Microsoft.ReportViewer.DataVisualization.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.Design, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ReportingServices.ReportViewerControl.WebForms.150.1652.0\lib\net40\Microsoft.ReportViewer.Design.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.ProcessingObjectModel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ReportingServices.ReportViewerControl.WebForms.150.1652.0\lib\net40\Microsoft.ReportViewer.ProcessingObjectModel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.WebDesign, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ReportingServices.ReportViewerControl.WebForms.150.1652.0\lib\net40\Microsoft.ReportViewer.WebDesign.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.WebForms, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ReportingServices.ReportViewerControl.WebForms.150.1652.0\lib\net40\Microsoft.ReportViewer.WebForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.Types, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.SqlServer.Types.14.0.314.76\lib\net40\Microsoft.SqlServer.Types.dll</HintPath>
+    </Reference>
+    <Reference Include="QuestPDF, Version=2025.7.4.0, Culture=neutral, PublicKeyToken=0f3c2b2315ff52c8, processorArchitecture=MSIL">
+      <HintPath>..\packages\QuestPDF.2025.7.4\lib\netstandard2.0\QuestPDF.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -187,17 +221,51 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\EditQuotationController.cs" />
     <Compile Include="Controllers\GenerateController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\QuotationController.cs" />
+    <Compile Include="Controllers\QuotationPDFController.cs" />
+    <Compile Include="DAL\Admin_DAL.cs" />
     <Compile Include="DAL\Login_DAL.cs" />
     <Compile Include="DAL\Quotation_DAL.cs" />
+    <Compile Include="DAL\UpdateQuotation_DAL.cs" />
+    <Compile Include="DeliveryItemList.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DeliveryItemList.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Filters\NoCacheAttribute.cs" />
+    <Compile Include="Filters\SessionAuthorizeAttribute.cs" />
+    <Compile Include="GetDeliveryReceipt.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>GetDeliveryReceipt.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="ItemDescription.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ItemDescription.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Admin_Model.cs" />
     <Compile Include="Models\DropdownModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QuotationData.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>QuotationData.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="QuotationMakerDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>QuotationMakerDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="SqlServerTypes\Loader.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\adminlte\build\config\postcss.config.js" />
@@ -2225,6 +2293,8 @@
     <Content Include="Content\datatables\datatables.min.js" />
     <Content Include="Content\font-awesome.css" />
     <Content Include="Content\font-awesome.min.css" />
+    <Content Include="Content\fonts\bootstrap-icons.css" />
+    <Content Include="Content\fonts\bootstrap-icons.min.css" />
     <Content Include="Content\img\abstract-blue-geometric-shapes-background.jpg" />
     <Content Include="Content\img\avatars\avatar-2.jpg" />
     <Content Include="Content\img\avatars\avatar-3.jpg" />
@@ -2236,6 +2306,7 @@
     <Content Include="Content\img\icons\icon-48x48.png" />
     <Content Include="Content\img\loginbg.gif" />
     <Content Include="Content\img\network-4561515_1280.jpg" />
+    <Content Include="Content\img\OrigLogo.png" />
     <Content Include="Content\img\photos\unsplash-1.jpg" />
     <Content Include="Content\img\photos\unsplash-2.jpg" />
     <Content Include="Content\img\photos\unsplash-3.jpg" />
@@ -2270,6 +2341,7 @@
     <Content Include="Content\iziToast-master\webpack.config.js" />
     <Content Include="Content\js\app.js" />
     <Content Include="Content\js\app.js.LICENSE.txt" />
+    <Content Include="Content\Loader.css" />
     <Content Include="Content\select2-bootstrap.css" />
     <Content Include="Content\src\select2-bootstrap4.css" />
     <Content Include="Content\src\select2-bootstrap4.min.css" />
@@ -2627,6 +2699,65 @@
     <Content Include="Content\adminlte\plugins\summernote\summernote.js.map" />
     <Content Include="Content\adminlte\plugins\summernote\summernote.min.js.map" />
     <Content Include="Content\adminlte\plugins\toastr\toastr.js.map" />
+    <Content Include="Content\fonts\fonts\bootstrap-icons.woff" />
+    <Content Include="Content\fonts\fonts\bootstrap-icons.woff2" />
+    <Content Include="Content\fonts\bootstrap-icons.scss" />
+    <Content Include="Content\fonts\bootstrap-icons.json" />
+    <Content Include="QuotationMakerDataSet.xsc">
+      <DependentUpon>QuotationMakerDataSet.xsd</DependentUpon>
+    </Content>
+    <Content Include="ItemDescription.xsc">
+      <DependentUpon>ItemDescription.xsd</DependentUpon>
+    </Content>
+    <Content Include="DeliveryItemList.xsc">
+      <DependentUpon>DeliveryItemList.xsd</DependentUpon>
+    </Content>
+    <None Include="DeliveryItemList.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>DeliveryItemList.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="DeliveryItemList.xss">
+      <DependentUpon>DeliveryItemList.xsd</DependentUpon>
+    </Content>
+    <Content Include="GetDeliveryReceipt.xsc">
+      <DependentUpon>GetDeliveryReceipt.xsd</DependentUpon>
+    </Content>
+    <None Include="GetDeliveryReceipt.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>GetDeliveryReceipt.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="GetDeliveryReceipt.xss">
+      <DependentUpon>GetDeliveryReceipt.xsd</DependentUpon>
+    </Content>
+    <None Include="ItemDescription.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>ItemDescription.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="ItemDescription.xss">
+      <DependentUpon>ItemDescription.xsd</DependentUpon>
+    </Content>
+    <Content Include="QuotationData.xsc">
+      <DependentUpon>QuotationData.xsd</DependentUpon>
+    </Content>
+    <None Include="QuotationData.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>QuotationData.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="QuotationData.xss">
+      <DependentUpon>QuotationData.xsd</DependentUpon>
+    </Content>
+    <None Include="QuotationMakerDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>QuotationMakerDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="QuotationMakerDataSet.xss">
+      <DependentUpon>QuotationMakerDataSet.xsd</DependentUpon>
+    </Content>
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
@@ -2642,7 +2773,12 @@
     <Content Include="Scripts\popper-utils.min.js" />
     <Content Include="Scripts\popper.js" />
     <Content Include="Scripts\popper.min.js" />
+    <Content Include="Scripts\quotation\Admin.js" />
+    <Content Include="Scripts\quotation\CheckSession.js" />
     <Content Include="Scripts\quotation\Dashboard.js" />
+    <Content Include="Scripts\quotation\Login.js" />
+    <Content Include="Scripts\quotation\QuotationHistory.js" />
+    <Content Include="Scripts\quotation\SessionKeepAlive.js" />
     <Content Include="Scripts\quotation\SignOut.js" />
     <Content Include="Scripts\select2.js" />
     <Content Include="Scripts\select2.min.js" />
@@ -2715,6 +2851,19 @@
     <Content Include="Scripts\umd\popper-utils.min.js" />
     <Content Include="Scripts\umd\popper.js" />
     <Content Include="Scripts\umd\popper.min.js" />
+    <Content Include="SqlServerTypes\readme.htm" />
+    <Content Include="SqlServerTypes\x64\msvcr120.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SqlServerTypes\x64\SqlServerSpatial140.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SqlServerTypes\x86\msvcr120.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SqlServerTypes\x86\SqlServerSpatial140.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -2741,11 +2890,17 @@
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
     <Content Include="Views\Home\Login.cshtml" />
+    <Content Include="Views\Home\Admin.cshtml" />
+    <Content Include="Views\Home\QuotationHistory.cshtml" />
+    <Content Include="Views\Shared\Loader.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Admin\" />
+    <Folder Include="Views\EditQuotation\" />
     <Folder Include="Views\Generate\" />
     <Folder Include="Views\Login\" />
+    <Folder Include="Views\QuotationPDF\" />
     <Folder Include="Views\Quotation\" />
   </ItemGroup>
   <ItemGroup>
@@ -2754,11 +2909,19 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="Content\fonts\bootstrap-icons.ts" />
     <TypeScriptCompile Include="Content\iziToast-master\types\index.d.ts" />
     <TypeScriptCompile Include="Scripts\index.d.ts" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Reports\DeliveryReceipt.rdlc" />
+    <EmbeddedResource Include="Reports\Quotation.rdlc" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -2795,7 +2958,9 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.AspNetCore.Components.Analyzers.3.1.0\build\netstandard2.0\Microsoft.AspNetCore.Components.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.AspNetCore.Components.Analyzers.3.1.0\build\netstandard2.0\Microsoft.AspNetCore.Components.Analyzers.props'))" />
+    <Error Condition="!Exists('..\packages\QuestPDF.2025.7.4\build\net4\QuestPDF.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\QuestPDF.2025.7.4\build\net4\QuestPDF.targets'))" />
   </Target>
+  <Import Project="..\packages\QuestPDF.2025.7.4\build\net4\QuestPDF.targets" Condition="Exists('..\packages\QuestPDF.2025.7.4\build\net4\QuestPDF.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

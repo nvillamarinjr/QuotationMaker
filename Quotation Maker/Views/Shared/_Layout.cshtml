@@ -1,9 +1,11 @@
-﻿<!DOCTYPE html>
+﻿@{ 
+    int timeoutMinutes = System.Web.HttpContext.Current.Session.Timeout;
+}
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
 
     <link href="~/Content/css/select2.min.css" rel="stylesheet" />
     <link href="~/Content/src/select2-bootstrap4.min.css" rel="stylesheet" />
@@ -24,9 +26,11 @@
         body {
             display: flex;
             align-items: stretch; 
-            font-family: 'Nunito', sans-serif;
+            /*font-family: 'Nunito', sans-serif;*/
         }
-
+        #sidebar .simplebar-track {
+            display: none !important;
+        }
         #sidebar {
             overflow: hidden !important;
             min-height: 100vh !important; /* At least full viewport */
@@ -46,9 +50,11 @@
         }
 
         .navbar {
-            width: 100%;
-            z-index: 1030;
             position: fixed;
+            top: 0;
+            right: 0;
+            left: 0;
+            z-index: 1050;
         }
 
         .main {
@@ -67,11 +73,11 @@
             max-width: inherit !important;
             overflow: hidden !important;
             width: inherit !important;
-            background-color: #6465d2 !important;
+            background-color: #3B4E68 !important;
         }
 
         .sidebar-link, a.sidebar-link {
-            background: #6465d2 !important;
+            background: #3B4E68 !important;
         }
 
         .p-0 {
@@ -80,7 +86,7 @@
         }
     </style>
 </head>
-<body>
+<body data-session-timeout="@timeoutMinutes">
     <nav id="sidebar" class="sidebar js-sidebar">
         <div class="sidebar-content js-simplebar" data-simplebar="init">
             <div class="simplebar-wrapper" style="margin: 0px;">
@@ -88,21 +94,27 @@
                 <div class="simplebar-mask">
                     <div class="simplebar-offset" style="right: 0px; bottom: 0px;">
                         <div class="simplebar-content-wrapper" tabindex="0" role="region" aria-label="scrollable content" style="height: 100%; overflow: hidden scroll;">
-                            <div class="simplebar-content" style="padding: 0px;">
+                            <div class="simplebar-content mt-5" style="padding: 0px;">
                                 <a class="sidebar-brand d-block text-center" href="#">
-                                    <h4 class="align-middle text-light">Quotation Maker</h4>
+                                    <img src="~/Content/img/OrigLogo.png" alt="Quotation Maker" class="img-fluid" style="max-height: 70px;">
                                 </a>
                                 <ul class="sidebar-nav">
                                     <li class="sidebar-item">
-                                        <a class="sidebar-link d-flex align-items-center" href="#">
+                                        <a class="sidebar-link d-flex align-items-center" href="/Home/Dashboard">
                                             <i class="fa fa-list"></i>
                                             <span class="align-middle ms-2 p-0">Generate Quotation</span>
                                         </a>
                                     </li>
                                     <li class="sidebar-item">
-                                        <a class="sidebar-link d-flex align-items-center" href="#">
+                                        <a class="sidebar-link d-flex align-items-center" href="/Home/Admin">
                                             <i class="fa fa-user-circle"></i>
                                             <span class="align-middle ms-2 p-0">Admin Settings</span>
+                                        </a>
+                                    </li>
+                                    <li class="sidebar-item">
+                                        <a class="sidebar-link d-flex align-items-center" href="/Home/QuotationHistory">
+                                            <i class="fa fa-history"></i>
+                                            <span class="align-middle ms-2 p-0">Quotation History</span>
                                         </a>
                                     </li>
                                     <li class="sidebar-item">
@@ -128,13 +140,22 @@
     </nav>
     <div class="main-content-wrapper">
         <nav class="navbar navbar-expand navbar-light navbar-bg">
+            <!-- Sidebar toggle -->
             <a class="sidebar-toggle js-sidebar-toggle">
                 <i class="hamburger align-self-center"></i>
             </a>
-            <div class="navbar-collapse collapse">
-                <div class="justify-content-start">
-                    <div class="ms-auto datetime" id="datetime"></div>
-                </div>
+
+            <!-- Left side -->
+            <div class="me-auto ms-3">
+                <div class="datetime" id="datetime"></div>
+            </div>
+
+            <!-- Right side -->
+            <div class="d-none d-sm-flex align-items-center ms-auto">
+                <i class="bi bi-person-circle align-self-center mr-2"></i>
+                <span class="navbar-text fw-semibold text-dark" id="lblFullName">
+                    Welcome @Session["Name"].ToString()
+                </span>
             </div>
         </nav>
 
@@ -148,9 +169,16 @@
     <script src="~/Scripts/select2.min.js"></script>
     <script src="~/Content/iziToast-master/dist/js/iziToast.js"></script>
     <script src="~/Content/iziToast-master/dist/js/iziToast.min.js"></script>
-    <script src="~/Scripts/quotation/SignOut.js"></script>
     <script src="~/Content/datatables/datatables.min.js"></script>
+    <script src="~/Scripts/quotation/SessionKeepAlive.js"></script>
+    <script src="~/Scripts/quotation/CheckSession.js"></script>
+    <script src="~/Scripts/quotation/SignOut.js"></script>
     <script>
+        window.onpageshow = function (event) {
+            if (event.persisted) {
+                window.location.reload();
+            }
+        }
         function updateDateTime() {
             const now = new Date();
             const options = {

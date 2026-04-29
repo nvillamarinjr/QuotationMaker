@@ -7,6 +7,8 @@
     <link href="~/Content/iziToast-master/dist/css/iziToast.min.css" rel="stylesheet" />
     <link href="~/Content/css/select2.min.css" rel="stylesheet" />
     <link href="~/Content/src/select2-bootstrap4.min.css" rel="stylesheet" />
+    <link href="~/Content/toastr.min.css" rel="stylesheet" />
+    <link href="~/Content/sweetalert/sweetalert2.min.css" rel="stylesheet" />
     <link href="~/Content/datatables/datatables.min.css" rel="stylesheet" />
 </head>
 
@@ -35,11 +37,6 @@
         .dataTables_empty {
             text-align: center !important;
         }
-
-        /*.input-group-text {
-                    min-width: 140px;*/ /* makes all labels same width */
-        /*justify-content: end;*/ /* aligns text to right edge */
-        /*}*/
 
         label {
             font-weight: bold;
@@ -113,7 +110,7 @@
                             <div class="mb-3 row">
                                 <label class="col-sm-4 col-form-label">JR/Reference #:</label>
                                 <div class="col-sm-8">
-                                    <input type="text" class="form-control" placeholder="Enter JR Number">
+                                    <input type="text" id="referenceNumber" class="form-control" placeholder="Enter JR Number">
                                 </div>
                             </div>
 
@@ -178,80 +175,6 @@
         </div>
     </div>
 
-    <!--<div class="container-fluid mt-0">
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title mb-0 text-dark" style="font-weight: bold; font-size:20px;">Quotation Details</h2>
-                    </div>
-                    <div class="row justify-content-center mt-4">-->
-    <!-- Left Column -->
-    <!--<div class="col-md-5">
-        <div class="mb-3 row">
-            <label class="col-sm-4 col-form-label">JR/Reference #:</label>
-            <div class="col-sm-8">
-                <input type="text" class="form-control" placeholder="Enter JR Number">
-            </div>
-        </div>
-
-        <div class="mb-3 row">
-            <label class="col-sm-4 col-form-label">Requestor:</label>
-            <div class="col-sm-8">
-                <select id="requestor" class="form-select">
-                </select>
-            </div>
-        </div>
-
-        <div class="mb-3 row">
-            <label class="col-sm-4 col-form-label">Department:</label>
-            <div class="col-sm-8">
-                <input type="text" id="department" class="form-control" placeholder="N/A" readonly>
-            </div>
-        </div>
-
-        <div class="mb-3 row">
-            <label class="col-sm-4 col-form-label">Local No:</label>
-            <div class="col-sm-8">
-                <input type="text" class="form-control" id="localnum" placeholder="N/A" readonly>
-            </div>
-        </div>
-    </div>-->
-    <!-- Right Column -->
-    <!--<div class="col-md-5">
-                            <div class="mb-3 row">
-                                <label class="col-sm-4 col-form-label">Quotation to:</label>
-                                <div class="col-sm-8">
-                                    <input type="text" id="quotationTo" class="form-control" placeholder="N/A">
-                                </div>
-                            </div>
-
-                            <div class="mb-3 row">
-                                <label class="col-sm-4 col-form-label">Attention:</label>
-                                <div class="col-sm-8">
-                                    <input type="text" id="attention" class="form-control" placeholder="N/A">
-                                </div>
-                            </div>
-
-                            <div class="mb-3 row">
-                                <label class="col-sm-4 col-form-label">Thru:</label>
-                                <div class="col-sm-8">
-                                    <input type="text" id="thru" class="form-control" placeholder="N/A">
-                                </div>
-                            </div>
-
-                            <div class="mb-3 row">
-                                <label class="col-sm-4 col-form-label">Subject:</label>
-                                <div class="col-sm-8">
-                                    <textarea class="form-control" id="subject" rows="1" placeholder="Enter a subject..."></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>-->
     <div class="container-fluid mt-0">
         <div class="row">
             <div class="col-12">
@@ -270,11 +193,11 @@
                         <table id="itemTable" class="table table-bordered table-striped">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Item Description</th>
-                                    <th>Qty</th>
-                                    <th>Unit</th>
-                                    <th>Rate</th>
-                                    <th>Amount</th>
+                                    <th class="ItemDescription">ItemDescription</th>
+                                    <th class="Qty">Qty</th>
+                                    <th class="Unit">Unit</th>
+                                    <th class="Rate">Rate</th>
+                                    <th class="Amount">Amount</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -310,11 +233,11 @@
                         <table id="laborTable" class="table table-bordered table-striped">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Labor Description</th>
-                                    <th>Count</th>
-                                    <th>Working Day</th>
-                                    <th>Rate</th>
-                                    <th>Amount</th>
+                                    <th class="LaborDescription">LaborDescription</th>
+                                    <th class="Count">Count</th>
+                                    <th class="WorkingDay">Working Day</th>
+                                    <th class="Rate">Rate</th>
+                                    <th class="Amount">Amount</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -416,13 +339,13 @@
                             <span class="input-group-text" id="inputGroup-sizing-default">Unit:</span>
                             <select id="unit" class="form-select">
                                 <option value="">Select a unit...</option>
-                                <option value="pcs">pcs</option>
-                                <option value="meters">meters</option>
-                                <option value="pack">pack</option>
-                                <option value="pack">box</option>
-                                <option value="pack">set</option>
-                                <option value="pack">roll</option>
-                                <option value="pack">core</option>
+                                <option value="PCS">PCS</option>
+                                <option value="METERS">METERS</option>
+                                <option value="PACK">PACK</option>
+                                <option value="BOX">BOX</option>
+                                <option value="SET">SET</option>
+                                <option value="ROLL">ROLL</option>
+                                <option value="CORE">CORE</option>
                             </select>
                         </div>
 
@@ -440,11 +363,6 @@
                             <span class="input-group-text" id="inputGroup-sizing-default">Total Amount:</span>
                             <input type="text" class="form-control" id="totalamount" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" placeholder="N/A" readonly>
                         </div>
-
-                        @*<div class="input-group mb-3">
-                                <span class="input-group-text" id="inputGroup-sizing-default">Amount:</span>
-                                <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" placeholder="N/A">
-                         </div>*@
                     </form>
                 </div>
                 <div class="modal-footer d-flex justify-content-center">
@@ -489,11 +407,6 @@
                             <span class="input-group-text" id="inputGroup-sizing-default">Total Amount:</span>
                             <input type="text" class="form-control" id="totallabor" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" placeholder="N/A" readonly>
                         </div>
-
-                        @*<div class="input-group mb-3">
-                                <span class="input-group-text" id="inputGroup-sizing-default">Amount:</span>
-                                <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" placeholder="N/A">
-                          </div>*@
                     </form>
                 </div>
                 <div class="modal-footer d-flex justify-content-center">
@@ -508,7 +421,10 @@
 <script src="~/Scripts/jquery-3.4.1.js"></script>
 <script src="~/Scripts/jquery-3.4.1.min.js"></script>
 <script src="~/Scripts/select2.min.js"></script>
+<script src="~/Scripts/toastr.min.js"></script>
 <script src="~/Content/iziToast-master/dist/js/iziToast.min.js"></script>
+<script src="~/Scripts/toastr.min.js"></script>
+<script src="~/Content/sweetalert/sweetalert2.all.min.js"></script>
 <script src="~/Scripts/quotation/SignOut.js"></script>
 <script src="~/Content/datatables/datatables.min.js"></script>
 <script src="~/Scripts/quotation/Dashboard.js"></script>

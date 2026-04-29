@@ -15,6 +15,7 @@ namespace Quotation_Maker.Models
     public class Items
     {
         public string itemname { get; set; }
+        public string Unit { get; set; }
         public decimal rate { get; set; } 
     }
 

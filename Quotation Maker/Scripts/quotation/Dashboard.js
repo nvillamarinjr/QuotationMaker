@@ -8,9 +8,12 @@
         lengthChange: false,
         paging: true,
         searching: false,
+        responsive: true,
+        scrollX: true,
+        scrollY: '400px',
         info: true,
         columnDefs: [
-            { targets: '_all', className: 'text-start align-center' } // forces left alignment for all
+            { targets: '_all', className: 'text-center align-center' } // forces left alignment for all
         ]
     });
 
@@ -18,9 +21,12 @@
         lengthChange: false,
         paging: true,
         searching: false,
+        responsive: true,
+        scrollX: true,
+        scrollY: '400px',
         info: true,
         columnDefs: [
-            { targets: '_all', className: 'text-start align-center' } // forces left alignment for all
+            { targets: '_all', className: 'text-center align-center' } // forces left alignment for all
         ]
     });
 
@@ -149,11 +155,20 @@
         }
 
         data.forEach(i => {
-            item.append(`<option value="${i.itemname}" data-rate="${i.rate}">${i.itemname}</option>`);
+            item.append(`<option value="${i.itemname}" data-rate="${i.rate}" data-unit="${i.Unit}">${i.itemname}</option>`);
         });
     }).fail(function () {
         alert("Failed to load items.");
     });
+
+    $('#item').on('change', function () {
+        const selectedOption = $(this).find(':selected');
+        const unitValue = selectedOption.data('unit'); // assuming your API returns "unit"
+
+        // Set the unit dropdown value
+        $('#unit').val(unitValue).trigger('change.select2');
+    }
+    );
 
     $.get('/Quotation/GetLabor', function (data) {
         const labor = $('#desc');
@@ -242,19 +257,30 @@
         $('#totallabor').val(formattedTotal);
     }
 
-    function getBaseKey() {
-        let d = new Date();
-        let month = (d.getMonth() + 1).toString().padStart(2, '0');
-        let year = d.getFullYear().toString().slice(-2);
-        return "QN-" + month + year;
-    }
 
-    function showKey() {
-        let base = getBaseKey();
-        let count = localStorage.getItem(base) || 0;
-        document.getElementById("quotationnum").value = base + "-" + (parseInt(count) + 1);
+    function GetLatestQuotationNumber() {
+        $.get('/Quotation/GetNumber', function (response) {
+            if (response) {
+                $('#quotationnum').val(response.number[0].QuotationNumber);
+            }
+        })
     }
-    showKey();
+    GetLatestQuotationNumber();
+
+    //function getBaseKey() {
+    //    let d = new Date();
+    //    let month = (d.getMonth() + 1).toString().padStart(2, '0');
+    //    let year = d.getFullYear().toString().slice(-2);
+    //    return "QN-" + month + year;
+    //}
+
+    //function showKey() {
+    //    let base = getBaseKey();
+    //    let count = localStorage.getItem(base) || 0;
+    //    document.getElementById("quotationnum").value = base + "-" + (parseInt(count) + 1);
+    //}
+    //showKey();
+
 
     //function newTransaction() {
     //    let base = getBaseKey();
@@ -417,7 +443,7 @@
     function computeVAT() {
         const v1 = parseFloat((material.value || '0').replace(/[₱,]/g, '')) || 0;
         const v2 = parseFloat((labor.value || '0').replace(/[₱,]/g, '')) || 0;
-        const totalVat = (v1 + v2) * 0.12;
+        const totalVat = (v1 + v2) * 0.15;
 
         vat.value = '₱' + totalVat.toLocaleString('en-PH', {
             minimumFractionDigits: 2,
@@ -471,4 +497,220 @@
     // run immediately + keep checking automatically
     toWords();
     setInterval(toWords, 500);
+
+
+    $('#generateQuotation').off("click").on("click", function () {
+        var QuotationNumber = $('#quotationnum').val();
+        var QuotationDate = $('#quotationdate').val();
+        var Validity = $('#changevalidity').val();
+        var ValidUntil = $('#validity').val();
+        var ReferenceNumber = $('#referenceNumber').val();
+        var Requestor = $('#requestor').val();
+        var Department = $('#department').val();
+        var LocalNumber = $('#localnum').val();
+        var QuotationTo = $('#quotationTo').val();
+        var Attention = $('#attention').val();
+        var Thru = $('#thru').val();
+        var Subject = $('#subject').val();
+        var MaterialSubTotal = $('#materialtotal').val();
+        var LaborSubTotal = $('#labortotal').val();
+        var Vat = $('#vat').val();
+        var Total = $('#totalamounts').val();
+        var TotalInWords = $('#inWords').text();
+
+        let isValid = true;
+
+        // ✅ Check textboxes inside .card
+        $('.card input[type="text"]').each(function () {
+            if ($(this).is(':disabled')) return; // skip disabled
+
+            if ($(this).val().trim() === "") {
+                iziToast.warning({
+                    title: 'Warning',
+                    message: 'Please complete all fields before adding.',
+                });
+                isValid = false;
+                return false; // break out of .each loop
+            }
+        });
+
+        // ✅ Check table rows (excluding header)
+        if (isValid) {
+            let rowCount = $('#itemTable').DataTable().rows().count();
+
+            if (rowCount === 0) {
+                iziToast.warning({
+                    title: 'Warning',
+                    message: 'Please add data in item',
+                });
+                isValid = false;
+            }
+        }
+        if (isValid) {
+            let rowCount = $('#laborTable').DataTable().rows().count();
+            if (rowCount === 0) {
+                iziToast.warning({
+                    title: 'Warning',
+                    message: 'Please add data in labor',
+                });
+                isValid = false;
+            }
+        }
+
+        if (!isValid) {
+            return;
+        }
+
+        // Collect table data into array of objects
+        var items = [];
+
+        $("#itemTable tr").each(function () {
+            var row = $(this);
+
+            var item = {
+                ItemDescription: row.find("td:eq(0)").text().trim(),
+                Qty: parseInt(row.find("td:eq(1)").text().trim()),
+                Unit: row.find("td:eq(2)").text().trim(),
+                Rate: row.find("td:eq(3)").text().trim(),
+                Amount: row.find("td:eq(4)").text().trim()
+            };
+
+            // Only push if row has data
+            if (item.ItemDescription) {
+                items.push(item);
+            }
+        });
+
+        // Collect table data into array of objects
+        var itemslabor = [];
+
+        $("#laborTable tr").each(function () {
+            var row = $(this);
+            var item = {
+                LaborDescription: row.find("td:eq(0)").text().trim(),
+                Count: parseInt(row.find("td:eq(1)").text().trim()),
+                WorkingDay: row.find("td:eq(2)").text().trim(),
+                Rate: row.find("td:eq(3)").text().trim(),
+                Amount: row.find("td:eq(4)").text().trim()
+            };
+
+            // Only push if row has data
+            if (item.LaborDescription) {
+                itemslabor.push(item);
+            }
+        });
+
+
+
+
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You want to Create this Quotation?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, Continue',
+            cancelButtonText: 'No, Cancel',
+            confirmButtonColor: '#2AA63E',
+            cancelButtonColor: '#E7180B',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.post('/Quotation/InsertQuotation', {
+                    QuotationNumber: QuotationNumber, QuotationDate: QuotationDate, Validity: Validity, ValidUntil: ValidUntil, ReferenceNumber: ReferenceNumber,
+                    Requestor: Requestor, Department: Department, LocalNo: LocalNumber, QuotationTo: QuotationTo, Attention: Attention, Thru: Thru, Subject: Subject, MaterialsSubTotal: MaterialSubTotal,
+                    LaborSubTotal: LaborSubTotal, Vat: Vat, Total: Total, TotalInWords: TotalInWords
+                }, function (response) {
+                    if (response.success) {
+                        $.ajax({
+                            url: '/Quotation/SaveItems',
+                            type: 'POST',
+                            contentType: 'application/json; charset=utf-8',
+                            data: JSON.stringify({ items: items, QuotationNumber: QuotationNumber }),
+                            success: function (response) {
+                                if (!response.success) {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: 'Failed to save items.'
+                                    });
+                                } else {
+
+
+                                    $.ajax({
+                                        url: '/Quotation/SaveLabor',
+                                        type: 'POST',
+                                        contentType: 'application/json; charset=utf-8',
+                                        data: JSON.stringify({ items: itemslabor, QuotationNumber: QuotationNumber }),
+                                        success: function (response) {
+                                            if (!response.success) {
+                                                Swal.fire({
+                                                    icon: 'error',
+                                                    title: 'Error',
+                                                    text: 'Failed to save items.'
+                                                });
+                                            } else {
+                                                clearfield();
+                                                $.ajax({
+                                                    url: '/Quotation/GeneratePdf',
+                                                    type: 'GET', // or POST if you prefer
+                                                    data: { QuotationNumber: QuotationNumber },
+                                                    xhrFields: {
+                                                        responseType: 'blob' // important for binary data like PDF
+                                                    },
+                                                    success: function (data) {
+                                                        // Create a blob URL and open/download the PDF
+                                                        var blob = new Blob([data], { type: 'application/pdf' });
+                                                        var link = document.createElement('a');
+                                                        link.href = window.URL.createObjectURL(blob);
+                                                        link.download = QuotationNumber +".pdf";
+                                                        link.click();
+                                                        GetLatestQuotationNumber();
+                                                    },
+                                                    error: function (xhr, status, error) {
+                                                        alert("Error generating PDF: " + error);
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Saved!',
+                            text: 'Quotation Created',
+                            showConfirmButton: false,
+                            timer: 2000 // closes automatically after 2 seconds
+                        });
+                    } else {
+                        console.log(response.message);
+                    }
+                });
+            }
+        });
+    });
+
+    function clearfield() {
+        $('#requestor').val(null).trigger('change');
+        $('#changevalidity').val(null).trigger('change');
+        $('#referenceNumber').val("");
+        $('#quotationTo').val("");
+        $('#attention').val("");
+        $('#thru').val("");
+        $('#subject').val("");
+        $('#itemTable').DataTable().clear().draw();
+        $('#laborTable').DataTable().clear().draw();
+        $('#totalitemsamount').val("");
+        $('#totallaboramount').val("");
+        $('#materialtotal').val("");
+        $('#labortotal').val("");
+        $('#vat').val("");
+        $('#totalamounts').val("");
+        $('#inWords').text('');
+    }
+
+
+
 });

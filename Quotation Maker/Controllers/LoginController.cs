@@ -14,11 +14,43 @@ namespace Quotation_Maker.Controllers
         [HttpPost]
         public JsonResult UserLogin(string username, string password)
         {
+
             bool isValid = userDAL.ValidateUser(username, password);
-            if (isValid)
-                return Json(new { success = true });
-            else
+            if (!isValid)
                 return Json(new { success = false, error = "Invalid username or password" });
+
+            bool isAdmin = userDAL.GetUserName(username, out string fullName);
+            // Server-side protection
+            Session["IsAdmin"] = isAdmin;   
+            Session["Name"] = fullName;
+
+            return Json(new
+            {
+                success = true,
+                fullName = fullName,
+                isAdmin = isAdmin
+            });
+        }
+
+        [HttpPost]
+        public ActionResult KeepAlive()
+        {
+            Session["ResetSession"] = DateTime.Now;
+            return new HttpStatusCodeResult(200);
+        }
+
+
+
+        public ActionResult Logout()
+        {
+            Session.Clear();
+            Session.Abandon();
+
+            Response.Cache.SetExpires(DateTime.UtcNow.AddMinutes(-1));
+            Response.Cache.SetCacheability(HttpCacheability.NoCache);
+            Response.Cache.SetNoStore();
+
+            return RedirectToAction("Login", "Home");
         }
     }
 }

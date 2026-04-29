@@ -1,0 +1,290 @@
+﻿<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QM | Dashboard</title>
+    <link rel="icon" type="image/png" href="~/Content/img/edtech.png" />
+    <link href="~/Content/iziToast-master/dist/css/iziToast.min.css" rel="stylesheet" />
+    <link href="~/Content/css/select2.min.css" rel="stylesheet" />
+    <link href="~/Content/src/select2-bootstrap4.min.css" rel="stylesheet" />
+    <link href="~/Content/sweetalert/sweetalert2.min.css" rel="stylesheet" />
+    <link href="~/Content/fonts/bootstrap-icons.css" rel="stylesheet" />
+    @*<link href="~/datatables/jquery.dataTables.min.css" rel="stylesheet" />
+        <link href="~/datatables/buttons.bootstrap4.min.css" rel="stylesheet" />*@
+    <link href="~/Content/datatables/datatables.min.css" rel="stylesheet" />
+</head>
+
+<body>
+    <style>
+
+        .nav-link {
+            display: block;
+            padding: .5rem 1rem;
+            color: black;
+        }
+
+        /* ✅ Make select2 container behave like a Bootstrap input */
+        .select2-container--default .select2-selection--single {
+            height: calc(2.25rem + 2px);
+            border: 1px solid #ced4da;
+            border-radius: 0.375rem;
+            display: flex;
+            align-items: center;
+        }
+
+            /* ✅ Truncate selected text based on container width */
+            .select2-container--default .select2-selection--single .select2-selection__rendered {
+                display: block;
+                width: 100%;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                padding-right: 1.5rem; /* space for the dropdown arrow */
+            }
+
+        .dataTables_empty {
+            text-align: center !important;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        .select2-container--bootstrap4 .select2-selection__rendered {
+            display: block !important;
+            width: 100% !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            white-space: nowrap !important;
+        }
+
+        .modal-body {
+            position: relative;
+            -ms-flex: 1 1 auto;
+            flex: 1 1 auto;
+            padding: 17% !important;
+            padding-top: 5% !important;
+            padding-bottom: 5% !important;
+        }
+
+        .adminbody {
+            height: 100%; /* Full height */
+            margin: 0; /* Remove default margin */
+            padding: 0; /* Remove default padding */
+        }
+
+        #reqTable {
+            font-size: 15px;
+        }
+    </style>
+
+    <div class="adminbody">
+        <div class="mt-6 mb-3">
+            <h1 class="ml-3 mb-0 text-dark" style="font-weight: bold; font-size:35px;">Data Management</h1>
+        </div>
+
+        <div class="col-12 mt-0">
+            <div class="card card-primary card-outline card-outline-tabs">
+                <div class="card-header p-0 border-bottom-0">
+                    <ul class="nav nav-tabs" id="custom-tabs-four-tab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="custom-tabs-four-req-tab" data-toggle="pill" href="#custom-tabs-four-req" role="tab" aria-controls="custom-tabs-four-req" aria-selected="true">Requestor List</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="custom-tabs-four-item-tab" data-toggle="pill" href="#custom-tabs-four-item" role="tab" aria-controls="custom-tabs-four-item" aria-selected="false">Item List</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="custom-tabs-four-messages-tab" data-toggle="pill" href="#custom-tabs-four-messages" role="tab" aria-controls="custom-tabs-four-messages" aria-selected="false">Labor List</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body p-1">
+                    <div class="tab-content" id="custom-tabs-four-tabContent">
+                        <div class="tab-pane fade active show" id="custom-tabs-four-req" role="tabpanel" aria-labelledby="custom-tabs-four-req-tab">
+                            <div class="card-body">
+                                <div class="text-end mt-0 mb-0">
+                                    <button type="button" id="addReq" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#reqModal">
+                                        <i class="bi bi-plus-circle-fill"></i>
+                                        Add Requestor
+                                    </button>
+                                </div>
+                                <table id="reqTable" class="table table-bordered table-striped">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Requestor</th>
+                                            <th>Department</th>
+                                            <th>Local No.</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+
+
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="custom-tabs-four-item" role="tabpanel" aria-labelledby="custom-tabs-four-item-tab">
+                            <div class="card-body">
+                                <div class="text-end  mt-0 mb-0">
+                                    <button type="button" id="addItem" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#itemModal">
+                                        <i class="bi bi-plus-circle-fill"></i>
+                                        Add Item
+                                    </button>
+                                </div>
+                                <table id="itemTable" class="table table-bordered table-striped">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Item</th>
+                                            <th>Rate</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+
+
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="custom-tabs-four-messages" role="tabpanel" aria-labelledby="custom-tabs-four-messages-tab">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col">
+                                    <div class="text-end mt-0 mb-0">
+                                        <button type="button" id="addLabor" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#laborModal">
+                                            <i class="bi bi-plus-circle-fill"></i>
+                                            Add Labor
+                                        </button>
+                                    </div>
+                                    </div>
+                                </div>
+
+                                <table id="laborTable" class="table table-bordered table-striped">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Labor</th>
+                                            <th>Rate</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.card -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Requestor -->
+        <div class="modal fade" id="reqModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-3" id="exampleModalLabel">Add Requestor</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body d-flex justify-content-center">
+                        <form>
+                            <div class="input-group mb-2">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Requestor:</span>
+                                <input type="text" class="form-control" id="req" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" placeholder="Enter Requestor's Name">
+                            </div>
+
+                            <div class="input-group mb-2">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Department:</span>
+                                <input type="text" class="form-control" id="dept" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" placeholder="Enter Dept.">
+                            </div>
+
+                            <div class="input-group mb-2">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Local No:</span>
+                                <input type="text" class="form-control" id="rate" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default"
+                                       maxlength="4" pattern="\d{4}" oninput="this.value = this.value.replace(/[^0-9]/g, '')" placeholder="Enter Local No.">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-center">
+                        <button type="button" id="addReqModal" class="btn btn-success">Add</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Item -->
+        <div class="modal fade" id="itemModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-3" id="exampleModalLabel">Add Item</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body d-flex justify-content-center">
+                        <form>
+                            <div class="input-group mb-2">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Rate:</span>
+                                <input type="text" class="form-control" id="itemrate" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default"
+                                       placeholder="Enter Rate">
+                            </div>
+
+                            <div class="input-group mb-2">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Item:</span>
+                                <input type="text" class="form-control" id="item" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" placeholder="Enter Item's Name">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-center">
+                        <button type="button" id="addItemModal" class="btn btn-success">Add</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Labor -->
+        <div class="modal fade" id="laborModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-3" id="exampleModalLabel">Add Labor</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body d-flex justify-content-center">
+                        <form>
+                            <div class="input-group mb-2">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Rate:</span>
+                                <input type="text" class="form-control" id="laborRate" aria-label="Sizing example input"
+                                       aria-describedby="inputGroup-sizing-default" placeholder="Enter Rate">
+                            </div>
+
+                            <div class="input-group mb-2">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Labor:</span>
+                                <input type="text" class="form-control" id="labor" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" placeholder="Enter Labor">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-center">
+                        <button type="button" class="btn btn-success" id="addLaborModal">Add</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>
+<script src="~/Scripts/jquery-3.4.1.js"></script>
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<script src="~/Scripts/select2.min.js"></script>
+<script src="~/Content/iziToast-master/dist/js/iziToast.min.js"></script>
+<script src="~/Content/datatables/datatables.min.js"></script>
+<script src="~/Content/sweetalert/sweetalert2.all.min.js"></script>
+<script src="~/Content/datatables/datatables.min.js"></script>
+<script src="~/Scripts/quotation/Admin.js"></script>
+<script src="~/Scripts/quotation/SignOut.js"></script>

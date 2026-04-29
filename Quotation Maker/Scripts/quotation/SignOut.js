@@ -18,6 +18,6 @@
     });
 
     setTimeout(() => {
-        window.location.href = "/Home/Login";  
+        window.location.replace("/Login/Logout");  
     }, 2000);
 }

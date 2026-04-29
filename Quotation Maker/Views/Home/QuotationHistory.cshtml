@@ -1,0 +1,658 @@
+﻿<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QM | Dashboard</title>
+    <link rel="icon" type="image/png" href="~/Content/img/edtech.png" />
+    <link href="~/Content/iziToast-master/dist/css/iziToast.min.css" rel="stylesheet" />
+    <link href="~/Content/css/select2.min.css" rel="stylesheet" />
+    <link href="~/Content/src/select2-bootstrap4.min.css" rel="stylesheet" />
+    <link href="~/Content/sweetalert/sweetalert2.min.css" rel="stylesheet" />
+    <link href="~/Content/fonts/bootstrap-icons.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    @*<link href="~/datatables/jquery.dataTables.min.css" rel="stylesheet" />
+        <link href="~/datatables/buttons.bootstrap4.min.css" rel="stylesheet" />*@
+    <link href="~/Content/datatables/datatables.min.css" rel="stylesheet" />
+</head>
+
+<body>
+    <style>
+
+        .nav-link {
+            display: block;
+            padding: .5rem 1rem;
+            color: black;
+        }
+
+        /* ✅ Make select2 container behave like a Bootstrap input */
+        .select2-container--default .select2-selection--single {
+            height: calc(2.25rem + 2px);
+            border: 1px solid #ced4da;
+            border-radius: 0.375rem;
+            display: flex;
+            align-items: center;
+        }
+
+            /* ✅ Truncate selected text based on container width */
+            .select2-container--default .select2-selection--single .select2-selection__rendered {
+                display: block;
+                width: 100%;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                padding-right: 1.5rem; /* space for the dropdown arrow */
+            }
+
+        .dataTables_empty {
+            text-align: center !important;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        .select2-container--bootstrap4 .select2-selection__rendered {
+            display: block !important;
+            width: 100% !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            white-space: nowrap !important;
+        }
+
+        .modal-body {
+            position: relative;
+            -ms-flex: 1 1 auto;
+            flex: 1 1 auto;
+            padding: 17% !important;
+            padding-top: 5% !important;
+            padding-bottom: 5% !important;
+        }
+
+        .adminbody {
+            height: 100%; /* Full height */
+            margin: 0; /* Remove default margin */
+            padding: 0; /* Remove default padding */
+        }
+
+        #reqTable {
+            font-size: 15px;
+        }
+    </style>
+
+    <div class="adminbody">
+        <div class="mt-6 mb-3">
+            <h1 class="ml-3 mb-0 text-dark" style="font-weight: bold; font-size:35px;">Data Management</h1>
+        </div>
+
+        <div class="col-12 mt-0">
+            <div class="card card-primary card-outline card-outline-tabs">
+                <div class="card-header p-0 border-bottom-0">
+                </div>
+                <div class="card-body p-1">
+                    <div class="card-body">
+                        <table id="tblQuotation" class="table table-bordered table-striped nowrap">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>QuotationNumber</th>
+                                    <th>QuotationDate</th>
+                                    <th>Validity</th>
+                                    <th>ValidUntil</th>
+                                    <th>ReferenceNumber</th>
+                                    <th>QuotationTo</th>
+                                    <th>Requestor</th>
+                                    <th>Attention</th>
+                                    <th>Department</th>
+                                    <th>Thru</th>
+                                    <th>LocalNo</th>
+                                    <th>Subject</th>
+                                    <th>MaterialSubTotal</th>
+                                    <th>LaborSubTotal</th>
+                                    <th>Vat</th>
+                                    <th>Total</th>
+                                    <th>PDF</th>
+                                    <th>CreatedBy</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.card -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Requestor -->
+        <div class="modal fade" id="QuotationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+            <div class="modal-dialog modal-dialog-centered modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-3" id="exampleModalLabel">Edit Quotation</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" style="padding:0px !important;">
+
+                        <div class="col-12">
+                            <div class="row justify-content-center mt-4">
+                                <!-- Left Column -->
+                                <div class="col-md-5">
+                                    <div class="mb-3 row">
+                                        <label class="col-sm-4 col-form-label">Quotation #:</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="quotationnum" placeholder="Enter Quotation #" readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <label class="col-sm-4 col-form-label">Quotation Date:</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" id="quotationdate" class="form-control" readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <label class="col-sm-4 col-form-label">Change Validity:</label>
+                                        <div class="col-sm-8">
+                                            <select id="changevalidity" class="form-select">
+                                                <option value="">Select validity...</option>
+                                                <option value="3">3 Months</option>
+                                                <option value="6">6 Months</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <label class="col-sm-4 col-form-label">Validity:</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="validity" placeholder="N/A" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row justify-content-center mt-4">
+                                <!-- Left Column -->
+                                <div class="col-md-5">
+                                    <div class="mb-3 row">
+                                        <label class="col-sm-4 col-form-label">JR/Reference #:</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" id="referenceNumber" class="form-control" placeholder="Enter JR Number">
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <label class="col-sm-4 col-form-label">Requestor:</label>
+                                        <div class="col-sm-8">
+                                            <select id="requestor" class="form-select">
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <label class="col-sm-4 col-form-label">Department:</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" id="department" class="form-control" placeholder="N/A" readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <label class="col-sm-4 col-form-label">Local No:</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="localnum" placeholder="N/A" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Right Column -->
+                                <div class="col-md-5">
+                                    <div class="mb-3 row">
+                                        <label class="col-sm-4 col-form-label">Quotation to:</label>
+                                        <div class="col-sm-8">
+                                            <textarea class="form-control" id="quotationTo" rows="2" placeholder="..."></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <label class="col-sm-4 col-form-label">Attention:</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" id="attention" class="form-control" placeholder="N/A">
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <label class="col-sm-4 col-form-label">Thru:</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" id="thru" class="form-control" placeholder="N/A">
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <label class="col-sm-4 col-form-label">Subject:</label>
+                                        <div class="col-sm-8">
+                                            <textarea class="form-control" id="subject" rows="1" placeholder="Enter a subject..."></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h2 class="card-title mb-0 text-dark" style="font-weight: bold; font-size:20px;">List of Items</h2>
+                                </div>
+                                <div class="card-body">
+                                    <div class="text-end">
+                                        <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#itemModal">
+                                            <i class="fa fa-plus"></i>
+                                            Add Item
+                                        </button>
+                                    </div>
+
+                                    <table id="itemTable" class="table table-bordered table-striped">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th class="ItemDescription">ItemDescription</th>
+                                                <th class="Qty">Qty</th>
+                                                <th class="Unit">Unit</th>
+                                                <th class="Rate">Rate</th>
+                                                <th class="Amount">Amount</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+
+                                    <div class="input-group justify-content-end mb-2">
+                                        <span class="input-group-text" id="inputGroup-sizing-default">Sub Total:</span>
+                                        <input type="text" class="form-control" id="totalitemsamount" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" placeholder="N/A" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h2 class="card-title mb-0 text-dark" style="font-weight: bold; font-size:20px;">Labor Description</h2>
+                                </div>
+                                <div class="card-body">
+                                    <div class="text-end">
+                                        <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#laborModal">
+                                            <i class="fa fa-plus"></i>
+                                            Add Labor
+                                        </button>
+                                    </div>
+
+                                    <table id="laborTable" class="table table-bordered table-striped">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th class="LaborDescription">LaborDescription</th>
+                                                <th class="Count">Count</th>
+                                                <th class="WorkingDay">Working Day</th>
+                                                <th class="Rate">Rate</th>
+                                                <th class="Amount">Amount</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+
+                                    <div class="input-group justify-content-end mb-2">
+                                        <span class="input-group-text" id="inputGroup-sizing-default">Sub Total:</span>
+                                        <input type="text" class="form-control" id="totallaboramount" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" placeholder="N/A" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h2 class="card-title mb-0 text-dark" style="font-weight: bold; font-size:20px;">Total Amounts</h2>
+                                </div>
+                                <div class="card-body">
+
+                                    <div class="row justify-content-center mt-4">
+                                        <!-- Left Column -->
+                                        <div class="col-md-5">
+                                            <div class="mb-2 row">
+                                                <label class="col-sm-4 col-form-label">Materials Sub Total:</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" id="materialtotal" class="form-control" placeholder="N/A" readonly>
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-2 row">
+                                                <label class="col-sm-4 col-form-label">Labor Sub Total:</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" id="labortotal" class="form-control" placeholder="N/A" readonly>
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-2 row">
+                                                <label class="col-sm-4 col-form-label">Vat:</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" id="vat" class="form-control" placeholder="N/A" readonly>
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-2 row">
+                                                <label class="col-sm-4 col-form-label">Total:</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" id="totalamounts" class="form-control" placeholder="N/A" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="mb-2 row">
+                                                <label class="col-sm-4 col-form-label">Total in words:</label>
+                                                <label class="ml-1" id="inWords" style="display:block;margin-top:10px;font-weight:bold;color:red;"></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-center">
+                        <button type="button" id="btnupdatemodal" class="btn btn-success">Update</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="modal fade" id="deliverymodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+            <div class="modal-dialog modal-dialog-centered modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-3" id="exampleModalLabel">DELIVERY RECEIPT</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" style="padding:0px !important;">
+                        <div class="container">
+
+                            <div class="row">
+                                <!-- Left Column -->
+                                <div class="col-6">
+                                    <div class="mb-3 mt-3 row">
+                                        <label class="col-sm-4 col-form-label">Delivered To:</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="deliverTo" readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <label class="col-sm-4 col-form-label">Date:</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" id="deliverydate" class="form-control" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label class="col-sm-4 col-form-label">Address:</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" id="deliveryAddress" class="form-control">
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <label class="col-sm-4 col-form-label">Referece #:</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="DeliveryReferenceNo" placeholder="N/A" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label class="col-sm-4 col-form-label">Prepared By:</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="PreparedBy" placeholder="Ex. Juan Delacruz">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Left Column -->
+                                <div class="col-6">
+
+                                    <div class="mb-3 mt-3 row">
+                                        <label class="col-sm-4 col-form-label">NO</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" id="InvNo" class="form-control" placeholder="" readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 mt-3 row">
+                                        <label class="col-sm-4 col-form-label">P.O NO</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" id="PONo" class="form-control" placeholder="">
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <label class="col-sm-4 col-form-label">PR No:</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" id="PRNo" class="form-control" placeholder="">
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <label class="col-sm-4 col-form-label">Requestor:</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" id="DeliveryRequestor" class="form-control" placeholder="N/A" readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <label class="col-sm-4 col-form-label">Plate No:</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="PlateNo" value="DBM-9883" placeholder="N/A">
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h2 class="card-title mb-0 text-dark" style="font-weight: bold; font-size:20px;">List of Items</h2>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="text-end">
+                                                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#DeliveryModal">
+                                                    <i class="fa fa-plus"></i>
+                                                    Add Item
+                                                </button>
+                                            </div>
+
+                                            <table id="DeliveryitemTable" class="table table-bordered table-striped">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th class="ItemDescription">ItemDescription</th>
+                                                        <th class="Qty">Qty</th>
+                                                        <th class="Unit">Unit</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-center">
+                        <button type="button" id="btncreatedeliverymodal" class="btn btn-success">Create Delivery</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delivery -->
+        <div class="modal fade" id="DeliveryModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-3" id="exampleModalLabel">Add Item</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" style="max-height:400px; overflow-y:auto;">
+                        <form>
+                            <div class="input-group mb-2">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Item:</span>
+                                <select id="Deliveryitem" class="form-select">
+                                </select>
+                            </div>
+
+                            <div class="input-group mb-2">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Unit:</span>
+                                <select id="Deliveryunit" class="form-select">
+                                    <option value="">Select a unit...</option>
+                                    <option value="PCS">PCS</option>
+                                    <option value="METERS">METERS</option>
+                                    <option value="PACK">PACK</option>
+                                    <option value="BOX">BOX</option>
+                                    <option value="SET">SET</option>
+                                    <option value="ROLL">ROLL</option>
+                                    <option value="CORE">CORE</option>
+                                </select>
+                            </div>
+
+                            <div class="input-group mb-2">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Quantity:</span>
+                                <input type="number" class="form-control" id="Deliveryquantity" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" value="1" min="1" disabled>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-center">
+                        <button type="button" id="addDeliveryModal" class="btn btn-success">Add</button>
+                        <button type="button" class="btn btn-danger" id="deliverclose" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- MODAL -->
+        <div class="modal fade" id="itemModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-3" id="exampleModalLabel">Add Item</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" style="max-height:400px; overflow-y:auto;">
+                        <form>
+                            <div class="input-group mb-2">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Item:</span>
+                                <select id="item" class="form-select">
+                                </select>
+                            </div>
+
+                            <div class="input-group mb-2">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Unit:</span>
+                                <select id="unit" class="form-select">
+                                    <option value="">Select a unit...</option>
+                                    <option value="PCS">PCS</option>
+                                    <option value="METERS">METERS</option>
+                                    <option value="PACK">PACK</option>
+                                    <option value="BOX">BOX</option>
+                                    <option value="SET">SET</option>
+                                    <option value="ROLL">ROLL</option>
+                                    <option value="CORE">CORE</option>
+                                </select>
+                            </div>
+
+                            <div class="input-group mb-2">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Quantity:</span>
+                                <input type="number" class="form-control" id="quantity" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" value="1" min="1" disabled>
+                            </div>
+
+                            <div class="input-group mb-2">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Rate:</span>
+                                <input type="text" class="form-control" id="rate" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" placeholder="N/A" readonly>
+                            </div>
+
+                            <div class="input-group mb-2">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Total Amount:</span>
+                                <input type="text" class="form-control" id="totalamount" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" placeholder="N/A" readonly>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-center">
+                        <button type="button" id="addItemModal" class="btn btn-success">Add</button>
+                        <button type="button" class="btn btn-danger" id="itemclose" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- labor -->
+        <div class="modal fade" id="laborModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-3" id="exampleModalLabel">Add Labor</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body d-flex justify-content-center">
+                        <form>
+                            <div class="input-group mb-2">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Description:</span>
+                                <select id="desc" class="form-select" style="width: 50%;">
+                                </select>
+                            </div>
+
+                            <div class="input-group mb-2">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Working Day:</span>
+                                <input type="text" class="form-control" id="work" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" value="lot" placeholder="Enter data...">
+                            </div>
+
+                            <div class="input-group mb-2">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Count:</span>
+                                <input type="number" class="form-control" id="count" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" value="1" min="1" disabled>
+                            </div>
+
+                            <div class="input-group mb-2">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Rate:</span>
+                                <input type="text" class="form-control" id="laborrate" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" placeholder="N/A" readonly>
+                            </div>
+
+                            <div class="input-group mb-2">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Total Amount:</span>
+                                <input type="text" class="form-control" id="totallabor" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" placeholder="N/A" readonly>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-center">
+                        <button type="button" class="btn btn-success" id="addLaborModal">Add</button>
+                        <button type="button" class="btn btn-danger" id="laborclose" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="loader" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog modal-dialog-centered modal-xs d-flex justify-content-center">
+                <div class="modal-content" style="width:auto;">
+                    <div class="modal-body">
+                        @Html.Partial("Loader")
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>
+<script src="~/Scripts/jquery-3.4.1.js"></script>
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<script src="~/Scripts/select2.min.js"></script>
+<script src="~/Content/iziToast-master/dist/js/iziToast.min.js"></script>
+<script src="~/Content/datatables/datatables.min.js"></script>
+<script src="~/Content/sweetalert/sweetalert2.all.min.js"></script>
+<script src="~/Content/datatables/datatables.min.js"></script>
+<script src="~/Scripts/quotation/QuotationHistory.js"></script>
+<script src="~/Scripts/quotation/SignOut.js"></script>
