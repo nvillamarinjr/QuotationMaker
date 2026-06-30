@@ -2301,9 +2301,13 @@
     <Content Include="Content\img\avatars\avatar-4.jpg" />
     <Content Include="Content\img\avatars\avatar-5.jpg" />
     <Content Include="Content\img\avatars\avatar.jpg" />
+    <Content Include="Content\img\BossSign.png" />
+    <Content Include="Content\img\Edtech.jpg" />
     <Content Include="Content\img\edtech.png" />
     <Content Include="Content\img\edtechlogo.png" />
+    <Content Include="Content\img\EDTECHlogo2x2.png" />
     <Content Include="Content\img\icons\icon-48x48.png" />
+    <Content Include="Content\img\jasonsign.png" />
     <Content Include="Content\img\loginbg.gif" />
     <Content Include="Content\img\network-4561515_1280.jpg" />
     <Content Include="Content\img\OrigLogo.png" />
