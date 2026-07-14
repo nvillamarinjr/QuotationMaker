@@ -226,6 +226,25 @@ namespace Quotation_Maker.DAL
         }
         #endregion
 
+        public async Task<bool> DuplicateData(string QuotationNumber)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                    using (SqlCommand com = new SqlCommand("spr_Duplicate", con))
+                {
+                    com.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    com.Parameters.AddWithValue("@QuotationNumber", QuotationNumber);
+                    await com.ExecuteNonQueryAsync();
+                    return true;
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
 
         #region insert quotation
         public async Task<bool> InsertQuotation(string QuotationNumber, DateTime QuotationDate, string Validity, DateTime ValidUntil, 

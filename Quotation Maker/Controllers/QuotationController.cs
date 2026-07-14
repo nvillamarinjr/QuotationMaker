@@ -146,6 +146,20 @@ namespace Quotation_Maker.Controllers
 
         }
 
+        [HttpPost]
+        public async Task<ActionResult> InsertDuplicate(string QuotationNumber)
+        {
+            try
+            {
+                byte[] pdfbyte = GenerateInsertPDF(QuotationNumber);
+                var result = await _dal.DuplicateData(QuotationNumber);
+                return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
 
         #region for insert
         [HttpGet]

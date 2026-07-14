@@ -127,6 +127,7 @@
         scrollX: true,
         scrollY: '400px',   // must specify height
         info: true,
+        pageLength: 10,
 
         ajax: {
             url: '/EditQuotation/GetQuotationData', // controller action
@@ -187,15 +188,35 @@
             {
                 data: 'Action', render: function (data, type, row) {
                     return `<button class="btn btn-sm btn-warning" id="btnedit" data-bs-toggle="modal" data-bs-target="#QuotationModal">Edit</button> 
-                            <button class="btn btn-sm btn-warning" id="btndelivery" data-bs-toggle="modal" data-bs-target="#deliverymodal">Delivery </button>`;
+                            <button class="btn btn-sm btn-warning" id="btndelivery" data-bs-toggle="modal" data-bs-target="#deliverymodal">Delivery </button>
+                             <button class="btn btn-sm btn-warning" id="btnduplicate">Duplicate </button>`;
                 }, className: 'text-center'
             }
         ]
     });
 
 
-    //GetItems
+    //DUPLICATE
+    $('#tblQuotation').on('click', '#btnduplicate', function () {
+        var table = $('#tblQuotation').DataTable();
+        var data = table.row($(this).closest('tr')).data();
+        var QuotationNumber = data.QuotationNumber;
 
+        $.post('/Quotation/InsertDuplicate', { QuotationNumber: QuotationNumber }, function (result) {
+            if (result) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Quotation Duplicated!',
+                    text: `Quotation ${QuotationNumber}`,
+                    showConfirmButton: false,
+                    timer: 2000 // closes automatically after 2 seconds
+                });
+                $('#tblQuotation').DataTable().ajax.reload();
+            }
+        });
+
+
+    });
 
     //======
 
