@@ -5,14 +5,12 @@
     <title>QM | Dashboard</title>
     <link rel="icon" type="image/png" href="~/Content/img/edtech.png" />
     <link href="~/Content/iziToast-master/dist/css/iziToast.min.css" rel="stylesheet" />
-    <link href="~/Content/css/select2.min.css" rel="stylesheet" />
-    <link href="~/Content/src/select2-bootstrap4.min.css" rel="stylesheet" />
     <link href="~/Content/sweetalert/sweetalert2.min.css" rel="stylesheet" />
     <link href="~/Content/fonts/bootstrap-icons.css" rel="stylesheet" />
     <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
-    @*<link href="~/datatables/jquery.dataTables.min.css" rel="stylesheet" />
-        <link href="~/datatables/buttons.bootstrap4.min.css" rel="stylesheet" />*@
     <link href="~/Content/datatables/datatables.min.css" rel="stylesheet" />
+    <link href="~/Content/css/select2.min.css" rel="stylesheet" />
+    <link href="~/Content/src/select2-bootstrap4.min.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -589,6 +587,63 @@
                 </div>
             </div>
         </div>
+
+
+        <!--EDIT ITEM-->
+
+        <div class="modal fade" id="EditItemModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-3" id="exampleModalLabel">Update Item</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" style="max-height:400px; overflow-y:auto;">
+                        <form>
+                            <div class="input-group mb-2">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Item:</span>
+                                <select id="EditItem" class="form-select" disabled>
+                                </select>
+                            </div>
+
+                            <div class="input-group mb-2">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Unit:</span>
+                                <select id="EditUnit" class="form-select">
+                                    <option value="">Select a unit...</option>
+                                    <option value="PCS">PCS</option>
+                                    <option value="METERS">METERS</option>
+                                    <option value="PACK">PACK</option>
+                                    <option value="BOX">BOX</option>
+                                    <option value="SET">SET</option>
+                                    <option value="ROLL">ROLL</option>
+                                    <option value="CORE">CORE</option>
+                                </select>
+                            </div>
+
+                            <div class="input-group mb-2">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Quantity:</span>
+                                <input type="number" class="form-control" id="EditQuantity" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" value="1" min="1" disabled>
+                            </div>
+
+                            <div class="input-group mb-2">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Rate:</span>
+                                <input type="text" class="form-control" id="EditRate" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" placeholder="N/A" readonly>
+                            </div>
+
+                            <div class="input-group mb-2">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Total Amount:</span>
+                                <input type="text" class="form-control" id="EditTotalamount" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" placeholder="N/A" readonly>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-center">
+                        <button type="button" id="UpdateEditItemModal" class="btn btn-success">Update</button>
+                        <button type="button" class="btn btn-danger" id="EditItemclose" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- labor -->
         <div class="modal fade" id="laborModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
@@ -634,6 +689,51 @@
             </div>
         </div>
 
+        <!--Update edit labor-->
+
+        <div class="modal fade" id="UpdatelaborModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-3" id="exampleModalLabel">Edit Labor</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body d-flex justify-content-center">
+                        <form>
+                            <div class="input-group mb-2">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Description:</span>
+                                <select id="Editdesc" class="form-select" style="width: 50%;" disabled>
+                                </select>
+                            </div>
+
+                            <div class="input-group mb-2">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Working Day:</span>
+                                <input type="text" class="form-control" id="Editwork" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" value="lot" placeholder="Enter data...">
+                            </div>
+
+                            <div class="input-group mb-2">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Count:</span>
+                                <input type="number" class="form-control" id="Editcount" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" value="1" min="1" disabled>
+                            </div>
+
+                            <div class="input-group mb-2">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Rate:</span>
+                                <input type="text" class="form-control" id="Editlaborrate" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" placeholder="N/A" readonly>
+                            </div>
+
+                            <div class="input-group mb-2">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Total Amount:</span>
+                                <input type="text" class="form-control" id="Edittotallabor" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" placeholder="N/A" readonly>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-center">
+                        <button type="button" class="btn btn-success" id="btnUpdateLaborModal">Update</button>
+                        <button type="button" class="btn btn-danger" id="Editlaborclose" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="modal fade" id="loader" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
             <div class="modal-dialog modal-dialog-centered modal-xs d-flex justify-content-center">
                 <div class="modal-content" style="width:auto;">

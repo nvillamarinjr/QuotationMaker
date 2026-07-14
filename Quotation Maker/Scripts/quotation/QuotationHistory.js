@@ -231,7 +231,6 @@
         } else {
             $('#quotationdate').val('');
         }
-
         // Example: put ReferenceNumber into modal textbox
         $('#quotationnum').val(data.QuotationNumber);
         $('#changevalidity').val(data.Validity).trigger('change');
@@ -277,7 +276,8 @@
                 { data: 'Amount', className: 'text-center' },
                 {
                     data: 'Action', render: function (data, type, row) {
-                        return `<button class="btn btn-danger btn-sm deleteBtn"><i class="fa fa-trash"></i> Delete</button>`
+                        return `<button class="btn btn-danger btn-sm deleteBtn"><i class="fa fa-trash"></i> Delete</button>
+                            <button class="btn btn-sm btn-warning" id="btnedititem" data-bs-toggle="modal" data-bs-target="#EditItemModal"><i class="fa fa-pencil"></i> Edit</button>`
                     }, className: 'text-center'
                 }
             ]
@@ -309,7 +309,8 @@
                 { data: 'Amount', className: 'text-center' },
                 {
                     data: 'Action', render: function (data, type, row) {
-                        return `<button class="btn btn-danger btn-sm deleteLaborBtn"><i class="fa fa-trash"></i> Delete</button>`
+                        return `<button class="btn btn-danger btn-sm deleteLaborBtn"><i class="fa fa-trash"></i> Delete</button>
+                            <button class="btn btn-sm btn-warning" id="btneditlabor" data-bs-toggle="modal" data-bs-target="#UpdatelaborModal"> <i class="fa fa-pencil"></i> Edit</button >`
                     }, className: 'text-center'
                 }
             ]
@@ -322,8 +323,82 @@
         }, 500);
     });
 
+    //UPDATE
+    $.get('/Quotation/GetItems', function (data) {
+        const item = $('#EditItem');
+        item.empty().append('<option value="" disabled selected>Select an item...</option>');
 
+        if (data.error) {
+            alert(data.error);
+            return;
+        }
 
+        data.forEach(i => {
+            item.append(`<option value="${i.itemname}" data-rate="${i.rate}" data-unit="${i.Unit}">${i.itemname}</option>`);
+        });
+    }).fail(function () {
+        alert("Failed to load items.");
+    });
+
+    $('#EditItem').on('change', function () {
+        const selectedOption = $(this).find(':selected');
+        const unitValue = selectedOption.data('unit'); // assuming your API returns "unit"
+
+        // Set the unit dropdown value
+        $('#EditUnit').val(unitValue).trigger('change.select2');
+    }
+    );
+
+    $('#EditItem').on('change', function () {
+        var rate = $('#EditItem option:selected').data('rate');
+
+        if (rate) {
+            $('#EditQuantity').prop('disabled', false);
+            $('#EditQuantity').val(1); // reset to 1 when new item is selected
+
+            // Format rate with ₱ and commas
+            var formattedRate = '₱' + parseFloat(rate).toLocaleString('en-PH', { minimumFractionDigits: 2 });
+            $('#EditRate').val(formattedRate);
+
+            updateEditAmount();
+        } else {
+            $('#EditQuantity').prop('disabled', true);
+            $('#EditQuantity').val('1');
+            $('#EditRate').val('');
+            $('#EditTotalamount').val('');
+        }
+    });
+    $('#itemTable').on('click', '#btnedititem', function () {
+        var table = $('#itemTable').DataTable();
+        var data = table.row($(this).closest('tr')).data();
+        $('#EditItem').val(data.ItemDescription).trigger('change');
+    });
+
+    $('#UpdateEditItemModal').on('click', function () {
+        var table = $('#itemTable').DataTable();
+        var item = $('#EditItem').val();
+        var Quantity = $('#EditQuantity').val();
+        var Unit = $('#EditUnit').val();
+        var Rate = $('#EditRate').val();
+        var Amount = $('#EditTotalamount').val();
+        var row = table.row(function (idx, data, node) {
+            return data.ItemDescription === item;  // match first column
+        });
+
+        if (row.any()) {
+            // Update the row’s data
+            var updated = row.data();
+            updated.Qty = Quantity;     
+            updated.Unit = Unit;    
+            updated.Rate = Rate;    
+            updated.Amount = Amount;   
+            row.data(updated).draw();
+        }
+
+        $('#EditItemModal').modal('hide');
+    });
+    $('#EditQuantity').on('input change', updateEditAmount);
+    //==============
     $.get('/Quotation/GetItems', function (data) {
         const item = $('#item');
         item.empty().append('<option value="" disabled selected>Select an item...</option>');
@@ -389,6 +464,29 @@
     }).fail(function () {
         alert("Failed to load items.");
     });
+    //updatelabormodal
+    $('#laborTable').on('click', '#btneditlabor', function () {
+        var table = $('#laborTable').DataTable();
+        var data = table.row($(this).closest('tr')).data();
+        $('#Editdesc').val(data.LaborDescription).trigger('change');
+    });
+
+
+    $.get('/Quotation/GetLabor', function (data) {
+        const labor = $('#Editdesc');
+        labor.empty().append('<option value="" disabled selected>Select a description...</option>');
+
+        if (data.error) {
+            alert(data.error);
+            return;
+        }
+
+        data.forEach(i => {
+            labor.append(`<option value="${i.desc}" data-rate="${i.laborrate}">${i.desc}</option>`);
+        });
+    }).fail(function () {
+        alert("Failed to load items.");
+    });
 
     $('#item').on('change', function () {
         var rate = $('#item option:selected').data('rate');
@@ -430,6 +528,18 @@
         var formattedTotal = '₱' + total.toLocaleString('en-PH', { minimumFractionDigits: 2 });
         $('#totalamount').val(formattedTotal);
     }
+    function updateEditAmount() {
+        // Remove ₱ and commas before parsing
+        var rateText = $('#EditRate').val().replace(/[₱,]/g, '') || 0;
+        var rate = parseFloat(rateText);
+        var qty = parseInt($('#EditQuantity').val()) || 0;
+
+        var total = rate * qty;
+
+        // Format with ₱, commas, and 2 decimals
+        var formattedTotal = '₱' + total.toLocaleString('en-PH', { minimumFractionDigits: 2 });
+        $('#EditTotalamount').val(formattedTotal);
+    }
 
     $('#desc').on('change', function () {
         var rateLabor = $('#desc option:selected').data('rate');
@@ -450,16 +560,77 @@
             $('#totallabor').val('');
         }
     });
+    $('#Editdesc').on('change', function () {
+        var rateLabor = $('#Editdesc option:selected').data('rate');
+
+        if (rateLabor) {
+            $('#Editcount').prop('disabled', false);
+            $('#Editcount').val(1); // reset to 1 when new item is selected
+
+            // Format rate with ₱ and commas
+            var formattedRate = '₱' + parseFloat(rateLabor).toLocaleString('en-PH', { minimumFractionDigits: 2 });
+            $('#Editlaborrate').val(formattedRate);
+
+            updateEditLaborAmount();
+        } else {
+            $('#Editcount').prop('disabled', true);
+            $('#Editcount').val('1');
+            $('#Editlaborrate').val('');
+            $('#Edittotallabor').val('');
+        }
+    });
 
     $('#count').on('input change', updateLaborAmount); // update when qty changes
+    $('#work').on('input change', updateLaborAmount);
+    $('#Editcount').on('input change', updateEditLaborAmount); // update when qty changes
+    $('#Editwork').on('input change', updateEditLaborAmount);
 
+    $('#btnUpdateLaborModal').on('click', function () {
+        var table = $('#laborTable').DataTable();
+        var description = $('#Editdesc').val();
+        var work = $('#Editwork').val();
+        var count = $('#Editcount').val();
+        var rate = $('#Editlaborrate').val();
+        var totallabor = $('#Edittotallabor').val();
+        var row = table.row(function (idx, data, node) {
+            return data.LaborDescription === description;  // match first column
+        });
+
+        if (row.any()) {
+            // Update the row’s data
+            var updated = row.data();
+            updated.Count = count;
+            updated.WorkingDay = work;
+            updated.Rate = rate;
+            updated.Amount = totallabor;
+            row.data(updated).draw();
+        }
+
+        $('#UpdatelaborModal').modal('hide');
+    });
+
+
+    function updateEditLaborAmount() {
+        // Remove ₱ and commas before parsing
+        var rateText = $('#Editlaborrate').val().replace(/[₱,]/g, '') || 0;
+        var rate = parseFloat(rateText);
+        var qty = parseInt($('#Editcount').val()) || 0;
+        var worktext = $('#Editwork').val().replace(/[₱,]/g, '') || 0;
+        var workday = parseInt($('#Editwork').val()) || 1;;
+        var total = rate * qty * workday;
+
+        // Format with ₱, commas, and 2 decimals
+        var formattedTotal = '₱' + total.toLocaleString('en-PH', { minimumFractionDigits: 2 });
+        $('#Edittotallabor').val(formattedTotal);
+    }
     function updateLaborAmount() {
         // Remove ₱ and commas before parsing
         var rateText = $('#laborrate').val().replace(/[₱,]/g, '') || 0;
         var rate = parseFloat(rateText);
         var qty = parseInt($('#count').val()) || 0;
-
-        var total = rate * qty;
+        var worktext = $('#work').val().replace(/[₱,]/g, '') || 0;
+        var workday = parseInt($('#work').val()) || 1;;
+        var total = rate * qty * workday;
 
         // Format with ₱, commas, and 2 decimals
         var formattedTotal = '₱' + total.toLocaleString('en-PH', { minimumFractionDigits: 2 });
@@ -565,6 +736,16 @@
         $('#deliverymodal').modal('show');
     });
     $('#itemModal').on('hidden.bs.modal', function () {
+        $('body').removeClass('modal-open');
+        $('.modal-backdrop').remove(); // remove leftover backdrop
+        $('#QuotationModal').modal('show');
+    });
+    $('#EditItemModal').on('hidden.bs.modal', function () {
+        $('body').removeClass('modal-open');
+        $('.modal-backdrop').remove(); // remove leftover backdrop
+        $('#QuotationModal').modal('show');
+    });
+    $('#UpdatelaborModal').on('hidden.bs.modal', function () {
         $('body').removeClass('modal-open');
         $('.modal-backdrop').remove(); // remove leftover backdrop
         $('#QuotationModal').modal('show');

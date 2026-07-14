@@ -243,14 +243,15 @@
     });
 
     $('#count').on('input change', updateLaborAmount); // update when qty changes
-
+    $('#work').on('input change', updateLaborAmount);
     function updateLaborAmount() {
         // Remove ₱ and commas before parsing
         var rateText = $('#laborrate').val().replace(/[₱,]/g, '') || 0;
         var rate = parseFloat(rateText);
         var qty = parseInt($('#count').val()) || 0;
-
-        var total = rate * qty;
+        var worktext = $('#work').val().replace(/[₱,]/g, '') || 0;
+        var workday = parseInt($('#work').val()) || 1;;
+        var total = rate * qty * workday;
 
         // Format with ₱, commas, and 2 decimals
         var formattedTotal = '₱' + total.toLocaleString('en-PH', { minimumFractionDigits: 2 });
