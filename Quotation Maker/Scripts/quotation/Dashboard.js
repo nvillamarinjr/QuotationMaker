@@ -6,11 +6,11 @@
 
     $('#itemTable').DataTable({
         lengthChange: false,
-        paging: true,
-        searching: false,
+        paging: false,
         responsive: true,
         scrollX: true,
         scrollY: '400px',
+        searching: false,
         info: true,
         columnDefs: [
             { targets: '_all', className: 'text-center align-center' } // forces left alignment for all

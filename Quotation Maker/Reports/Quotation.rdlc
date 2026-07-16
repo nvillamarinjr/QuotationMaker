@@ -432,6 +432,9 @@
                           <CellContents>
                             <Textbox Name="ItemDescription">
                               <CanGrow>true</CanGrow>
+                              <UserSort>
+                                <SortExpression>=Fields!ItemDescription.Value</SortExpression>
+                              </UserSort>
                               <KeepTogether>true</KeepTogether>
                               <Paragraphs>
                                 <Paragraph>
@@ -460,6 +463,7 @@
                                 <PaddingBottom>2pt</PaddingBottom>
                               </Style>
                             </Textbox>
+                            <rd:Selected>true</rd:Selected>
                           </CellContents>
                         </TablixCell>
                         <TablixCell>
