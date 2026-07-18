@@ -1,5 +1,6 @@
 ﻿$(function () {
 
+
     $('#itemTable').DataTable({
         lengthChange: false,
         paging: true,
@@ -9,6 +10,7 @@
             { targets: '_all', className: 'text-center align-center' } // forces left alignment for all
         ]
     });
+
     $('#DeliveryitemTable').DataTable({
         lengthChange: false,
         paging: true,
@@ -125,9 +127,9 @@
         searching: true,
         responsive: true,
         scrollX: true,
-        scrollY: '400px',   // must specify height
+        //scrollY: '100vh',  
         info: true,
-        pageLength: 10,
+        pageLength: 20,
 
         ajax: {
             url: '/EditQuotation/GetQuotationData', // controller action
@@ -189,11 +191,12 @@
                 data: 'Action', render: function (data, type, row) {
                     return `<button class="btn btn-sm btn-warning" id="btnedit" data-bs-toggle="modal" data-bs-target="#QuotationModal">Edit</button> 
                             <button class="btn btn-sm btn-warning" id="btndelivery" data-bs-toggle="modal" data-bs-target="#deliverymodal">Delivery </button>
-                             <button class="btn btn-sm btn-warning" id="btnduplicate">Duplicate </button>`;
+                             <button class="btn btn-sm btn-warning" id="btnduplicate">Duplicate </button>
+                            <button class="btn btn-danger btn-sm" id="deletedupli"><i class="fa fa-trash"></i> Delete</button>`;
                 }, className: 'text-center'
             }
         ]
-    });
+    }).order([1, 'asc']).draw();
 
 
     //DUPLICATE
@@ -211,7 +214,11 @@
                     showConfirmButton: false,
                     timer: 2000 // closes automatically after 2 seconds
                 });
-                $('#tblQuotation').DataTable().ajax.reload();
+                setTimeout(function () {
+                    $('#tblQuotation').DataTable().ajax.reload();
+                   $('#tblQuotation').DataTable().order([1, 'asc']).draw();
+                }, 1000); 
+
             }
         });
 
@@ -909,6 +916,47 @@
     });
 
 
+    $('#tblQuotation tbody').on('click', '#deletedupli', function () {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You want to Delete this Quotation?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, Continue',
+            cancelButtonText: 'No, Cancel',
+            confirmButtonColor: '#2AA63E',
+            cancelButtonColor: '#E7180B',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var table = $('#tblQuotation').DataTable();
+                var data = table.row($(this).closest('tr')).data();
+                var QuotationNumber = data.QuotationNumber;
+                $.post('/Quotation/DeleteDupli', { QuotationNumber: QuotationNumber }, function (result) {
+                    if (result) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Deleted!',
+                            text: 'Quotation Deleted',
+                            showConfirmButton: false,
+                            timer: 2000 // closes automatically after 2 seconds
+                        });
+
+                        $('#tblQuotation').DataTable().ajax.reload();
+                        $('#tblQuotation').DataTable().order([1, 'asc']).draw();
+                    } else {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Updated!',
+                            text: result.message,
+                            showConfirmButton: false,
+                            timer: 2000 // closes automatically after 2 seconds
+                        });
+                    }
+                });
+            }
+        });
+    });
 
 
     $('#btnupdatemodal').on("click", function () {
@@ -1011,7 +1059,6 @@
                 itemslabor.push(item);
             }
         });
-
 
 
 

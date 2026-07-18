@@ -76,7 +76,19 @@ namespace Quotation_Maker.Controllers
                 return Json(new { success = false, message = ex.Message }, JsonRequestBehavior.AllowGet);
             }
         }
-
+        [HttpPost]
+        public async Task<ActionResult> DeleteDupli(string QuotationNumber)
+        {
+            try
+            {
+                var result = await _dal.DeleteDupli(QuotationNumber);
+                return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+            } 
+                catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
 
         [HttpPost]
         public ActionResult SaveItems(List<ItemViewModel> items, string QuotationNumber)
